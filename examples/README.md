@@ -11,12 +11,20 @@ feature-table order.
   projection parameter, and provenance field.
 - `data/` contains the referenced, SHA-256-pinned inputs.
 
-The bundle is intentionally marked as a contract fixture rather than a fitted
-scientific result. M2 will replace this illustrative parameterization in smoke
-tests with output produced by the R backend.
+The committed bundle remains a deterministic contract fixture rather than a
+fitted scientific result. M2 smoke tests fit this dataset into a temporary
+output directory and validate the generated bundle without replacing the stable
+fixture.
 
 Regenerate all files deterministically from the repository root:
 
 ```sh
 pnpm generate:fixtures
+```
+
+Fit and validate it with the M2 backend after installing `rpkg/`:
+
+```sh
+Rscript scripts/smoke-r-backend.R out/m2-smoke
+pnpm validate:bundle out/m2-smoke/results-bundle.json
 ```

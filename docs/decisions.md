@@ -7,15 +7,20 @@
 - R package setup: conventional package layout, `testthat`, `lintr`, and `air`.
 - Contract dialect: JSON Schema draft 2020-12.
 - Contract versions: semantic versions beginning at `1.0.0`.
+- Open-source license: MIT.
 
-## Owner decision required
+## M2 verified choices
 
-- **Open-source license.** No license has been selected. MIT, Apache-2.0, and
-  GPL-3.0-or-later have materially different patent and copyleft terms, so this
-  decision is not inferred by the scaffold.
+- Minimum R version: 4.3.0.
+- First engine: gllvm >= 2.0.0, probed with gllvm 2.0.2 on R 4.3.3.
+- Negative-binomial family maps to `negative.binomial`; ZINB maps to `ZINB`.
+- Library size is a log effort offset centered on median library size.
+- gllvm standard errors seed a diagonal sampling-covariance approximation in M2;
+  M3 adds resampling-based metric uncertainty.
+- `TMB::openmp()` applies `cpuThreads`; affinity and hard memory enforcement
+  stay runner-owned.
 
-## Deferred until M2
+## Deferred until M3
 
-- Exact minimum R version and dependency versions.
-- `gllvm` API translation details, after probing the installed current version.
-- Bootstrap versus sampling-covariance uncertainty as the initial default.
+- Bootstrap versus sampling-around-the-estimate for metric intervals.
+- Full interpolated/extrapolated predictive clouds and geometric tier tests.

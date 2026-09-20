@@ -11,9 +11,10 @@
     "generate": "pnpm generate:fixtures && pnpm generate:types",
     "generate:fixtures": "Rscript scripts/generate-golden-data.R && node scripts/generate-golden-contracts.mjs",
     "generate:types": "node scripts/generate-types.mjs",
+    "validate:bundle": "node scripts/validate-results-bundle.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "eslint . && Rscript -e \"lints <- unlist(lapply(c('scripts', 'rpkg/R', 'rpkg/tests'), lintr::lint_dir)); print(lints); quit(status = length(lints))\"",
+    "lint": "eslint . && Rscript -e \"lints <- c(lintr::lint_dir('scripts'), lintr::lint_package('rpkg')); print(lints); quit(status = length(lints))\"",
     "test": "node --test tests/*.test.mjs",
     "typecheck": "tsc --noEmit",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test"

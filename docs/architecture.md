@@ -37,3 +37,21 @@ The schemas enforce document structure. `tests/contracts.test.mjs` also checks
 relationships JSON Schema cannot express cleanly, including fixture hashes,
 table identifiers, matrix dimensions, tier definitions, and uncertainty
 presence.
+
+## R package engine boundary
+
+`metaspacer::run_spec()` is the package's only exported function. It selects an
+internal S3 engine and invokes the same five-stage contract for every backend:
+`validate`, `estimate_cost`, `translate`, `fit`, and `extract`. Validation
+returns machine-readable issue codes, JSON-pointer-like paths, human-readable
+messages, and mismatch details.
+
+The gllvm translation uses its public API and accessors. In particular,
+`getLV()` and `getLoadings()` provide the correctly scaled latent terms; the
+consumer-facing coefficient matrix is reconstructed from level-zero link-scale
+predictions. This avoids coupling the bundle format to gllvm's normalized
+internal parameter representation.
+
+Bundle files are written atomically. CPU thread configuration is passed to TMB,
+while process affinity, hard memory limits, scheduling, and termination remain
+outside the pure package.

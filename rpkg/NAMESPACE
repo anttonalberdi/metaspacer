@@ -1,0 +1,6 @@
+export(run_spec)
+S3method(engine_estimate_cost,metaspacer_engine_gllvm)
+S3method(engine_extract,metaspacer_engine_gllvm)
+S3method(engine_fit,metaspacer_engine_gllvm)
+S3method(engine_translate,metaspacer_engine_gllvm)
+S3method(engine_validate,metaspacer_engine_gllvm)

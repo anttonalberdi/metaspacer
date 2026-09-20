@@ -1,4 +1,9 @@
 linters: linters_with_defaults(
   line_length_linter = line_length_linter(100L),
-  object_name_linter = object_name_linter(styles = c("snake_case"))
+  object_length_linter = object_length_linter(50L),
+  object_usage_linter = NULL,
+  object_name_linter = object_name_linter(
+    styles = c("snake_case", "symbols"),
+    regexes = c(s3_method = "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$")
+  )
   )

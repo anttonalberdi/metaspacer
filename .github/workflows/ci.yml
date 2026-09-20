@@ -22,12 +22,25 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: '4.3'
-      - name: Install R lint dependency
-        run: install.packages('lintr', repos = 'https://cloud.r-project.org')
-        shell: Rscript {0}
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          working-directory: rpkg
+          extra-packages: |
+            any::lintr
+            any::rcmdcheck
+          needs: check
       - run: pnpm install --frozen-lockfile
       - name: Verify generated artifacts are current
         run: |
           pnpm generate
           git diff --exit-code
       - run: pnpm check
+      - name: Check R package
+        run: >-
+          rcmdcheck::rcmdcheck('rpkg', args = '--no-manual', error_on = 'error')
+        shell: Rscript {0}
+      - name: Fit and validate golden example
+        run: |
+          R CMD INSTALL rpkg
+          Rscript scripts/smoke-r-backend.R /tmp/metaspacer-m2-smoke
+          pnpm validate:bundle /tmp/metaspacer-m2-smoke/results-bundle.json
