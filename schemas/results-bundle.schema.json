@@ -1,0 +1,924 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://metaspacer.org/schemas/results-bundle/1.0.0",
+  "title": "ResultsBundle",
+  "description": "Engine-neutral precomputed results, projection parameters, and provenance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "bundleVersion",
+    "specVersion",
+    "precomputed",
+    "fittedParameters",
+    "provenance"
+  ],
+  "properties": {
+    "bundleVersion": {
+      "const": "1.0.0"
+    },
+    "specVersion": {
+      "const": "1.0.0"
+    },
+    "precomputed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metrics", "ordination"],
+      "properties": {
+        "metrics": {
+          "type": "array",
+          "minItems": 8,
+          "items": {
+            "$ref": "#/$defs/metric"
+          },
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "const": "dispersion"
+                  }
+                },
+                "required": ["id"]
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "const": "effective_dimensionality"
+                  }
+                },
+                "required": ["id"]
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "const": "schoener_d"
+                  }
+                },
+                "required": ["id"]
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "const": "containment"
+                  }
+                },
+                "required": ["id"]
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "const": "transition_distance"
+                  }
+                },
+                "required": ["id"]
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "const": "plasticity"
+                  }
+                },
+                "required": ["id"]
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "const": "variance_partition"
+                  }
+                },
+                "required": ["id"]
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "const": "chao_coverage"
+                  }
+                },
+                "required": ["id"]
+              }
+            }
+          ]
+        },
+        "ordination": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["axisLabels", "states"],
+          "properties": {
+            "axisLabels": {
+              "type": "array",
+              "minItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "states": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/ordinatedState"
+              }
+            }
+          }
+        }
+      }
+    },
+    "fittedParameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dimensions",
+        "responseFeatures",
+        "coefficientNames",
+        "design",
+        "offset",
+        "beta",
+        "latentLoadings",
+        "latentDistribution",
+        "projection",
+        "family",
+        "uncertainty"
+      ],
+      "properties": {
+        "dimensions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "responses",
+            "coefficients",
+            "latentVariables",
+            "projectionAxes"
+          ],
+          "properties": {
+            "responses": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "coefficients": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "latentVariables": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "projectionAxes": {
+              "type": "integer",
+              "minimum": 2
+            }
+          }
+        },
+        "responseFeatures": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "coefficientNames": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "design": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["predictors", "columns"],
+          "properties": {
+            "predictors": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/predictorEncoding"
+              }
+            },
+            "columns": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/designColumn"
+              }
+            }
+          }
+        },
+        "offset": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "librarySize",
+            "genomeSizeCorrection",
+            "completenessCorrection"
+          ],
+          "properties": {
+            "librarySize": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["source", "transform", "referenceValue"],
+              "properties": {
+                "source": {
+                  "enum": ["count_table_row_sum", "metadata_column"]
+                },
+                "column": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "transform": {
+                  "const": "log"
+                },
+                "referenceValue": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              }
+            },
+            "genomeSizeCorrection": {
+              "type": "boolean"
+            },
+            "completenessCorrection": {
+              "type": "boolean"
+            }
+          }
+        },
+        "beta": {
+          "$ref": "#/$defs/matrix",
+          "description": "Coefficient-by-response matrix."
+        },
+        "latentLoadings": {
+          "$ref": "#/$defs/matrix",
+          "description": "Latent-variable-by-response Lambda matrix."
+        },
+        "latentDistribution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mean", "covariance"],
+          "properties": {
+            "mean": {
+              "$ref": "#/$defs/vector"
+            },
+            "covariance": {
+              "$ref": "#/$defs/matrix"
+            }
+          }
+        },
+        "projection": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["center", "rotation"],
+          "properties": {
+            "center": {
+              "$ref": "#/$defs/vector"
+            },
+            "rotation": {
+              "$ref": "#/$defs/matrix",
+              "description": "Response-by-axis shared rotation matrix."
+            }
+          }
+        },
+        "family": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "link", "dispersion"],
+          "properties": {
+            "name": {
+              "enum": ["negative_binomial", "zinb"]
+            },
+            "link": {
+              "const": "log"
+            },
+            "dispersion": {
+              "$ref": "#/$defs/vector"
+            },
+            "zeroInflation": {
+              "$ref": "#/$defs/vector"
+            }
+          }
+        },
+        "uncertainty": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/samplingCovariance"
+            },
+            {
+              "$ref": "#/$defs/posteriorDraws"
+            }
+          ]
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "specSha256",
+        "dataSha256",
+        "engine",
+        "metaspacerVersion",
+        "seed",
+        "createdAt",
+        "tierDefinitions",
+        "extrapolationMethod"
+      ],
+      "properties": {
+        "specSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "dataSha256": {
+          "type": "object",
+          "minProperties": 3,
+          "required": ["countTable", "sampleMetadata", "featureMetadata"],
+          "additionalProperties": false,
+          "properties": {
+            "countTable": {
+              "$ref": "#/$defs/sha256"
+            },
+            "sampleMetadata": {
+              "$ref": "#/$defs/sha256"
+            },
+            "featureMetadata": {
+              "$ref": "#/$defs/sha256"
+            },
+            "phylogeneticTree": {
+              "$ref": "#/$defs/sha256"
+            }
+          },
+          "propertyNames": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          }
+        },
+        "engine": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "version"],
+          "properties": {
+            "name": {
+              "enum": ["gllvm", "hmsc", "hmsc_hpc", "vae"]
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "metaspacerVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+].+)?$"
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tierDefinitions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["measured", "interpolated", "extrapolated"],
+          "properties": {
+            "measured": {
+              "type": "string",
+              "minLength": 1
+            },
+            "interpolated": {
+              "type": "string",
+              "minLength": 1
+            },
+            "extrapolated": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "extrapolationMethod": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "conditionColumns"],
+          "properties": {
+            "name": {
+              "enum": ["convex_hull", "observed_range", "mixed_hull_range"]
+            },
+            "conditionColumns": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "confidenceTier": {
+      "enum": ["measured", "interpolated", "extrapolated"]
+    },
+    "scalar": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        }
+      ]
+    },
+    "vector": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "matrix": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/vector"
+      }
+    },
+    "estimate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["median", "lower", "upper", "level", "intervalType"],
+      "properties": {
+        "median": {
+          "type": "number"
+        },
+        "lower": {
+          "type": "number"
+        },
+        "upper": {
+          "type": "number"
+        },
+        "level": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "intervalType": {
+          "enum": ["confidence", "credible", "bootstrap", "empirical"]
+        }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "tier", "estimate", "unit", "scope"],
+      "properties": {
+        "id": {
+          "enum": [
+            "dispersion",
+            "effective_dimensionality",
+            "schoener_d",
+            "containment",
+            "transition_distance",
+            "plasticity",
+            "variance_partition",
+            "chao_coverage"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tier": {
+          "$ref": "#/$defs/confidenceTier"
+        },
+        "estimate": {
+          "$ref": "#/$defs/estimate"
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "coordinate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["axis", "estimate"],
+      "properties": {
+        "axis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "estimate": {
+          "$ref": "#/$defs/estimate"
+        }
+      }
+    },
+    "geometryFlag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "insideSampledDomain", "distanceToDomain"],
+      "properties": {
+        "method": {
+          "enum": ["convex_hull", "observed_range", "mixed_hull_range"]
+        },
+        "insideSampledDomain": {
+          "type": "boolean"
+        },
+        "distanceToDomain": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "predictorEncoding": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "type", "levels", "referenceLevel"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "type": {
+              "const": "categorical"
+            },
+            "levels": {
+              "type": "array",
+              "minItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "referenceLevel": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "type", "center", "scale"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "type": {
+              "const": "continuous"
+            },
+            "center": {
+              "type": "number"
+            },
+            "scale": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "type", "falseValue", "trueValue"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "type": {
+              "const": "binary"
+            },
+            "falseValue": {
+              "$ref": "#/$defs/scalar"
+            },
+            "trueValue": {
+              "$ref": "#/$defs/scalar"
+            }
+          }
+        }
+      ]
+    },
+    "designColumn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "factors"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "factors": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["predictor", "operation"],
+                "properties": {
+                  "predictor": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "operation": {
+                    "const": "identity"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["predictor", "operation", "level"],
+                "properties": {
+                  "predictor": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "operation": {
+                    "const": "indicator"
+                  },
+                  "level": {
+                    "$ref": "#/$defs/scalar"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "ordinatedState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stateId",
+        "kind",
+        "group",
+        "condition",
+        "tier",
+        "coordinates",
+        "geometry"
+      ],
+      "properties": {
+        "stateId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sampleId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": ["observed", "predicted"]
+        },
+        "group": {
+          "type": "string",
+          "minLength": 1
+        },
+        "condition": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        "tier": {
+          "$ref": "#/$defs/confidenceTier"
+        },
+        "coordinates": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/coordinate"
+          }
+        },
+        "geometry": {
+          "$ref": "#/$defs/geometryFlag"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "tier": {
+                "const": "measured"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "kind": {
+                "const": "observed"
+              },
+              "sampleId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "geometry": {
+                "type": "object",
+                "properties": {
+                  "insideSampledDomain": {
+                    "const": true
+                  }
+                }
+              }
+            },
+            "required": ["sampleId"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "tier": {
+                "const": "interpolated"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "kind": {
+                "const": "predicted"
+              },
+              "geometry": {
+                "type": "object",
+                "properties": {
+                  "insideSampledDomain": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "tier": {
+                "const": "extrapolated"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "kind": {
+                "const": "predicted"
+              },
+              "geometry": {
+                "type": "object",
+                "properties": {
+                  "insideSampledDomain": {
+                    "const": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "samplingCovariance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "parameterOrder", "covariance"],
+      "properties": {
+        "kind": {
+          "const": "sampling_covariance"
+        },
+        "parameterOrder": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "covariance": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["representation", "diagonal"],
+              "properties": {
+                "representation": {
+                  "const": "diagonal"
+                },
+                "diagonal": {
+                  "$ref": "#/$defs/vector"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["representation", "values"],
+              "properties": {
+                "representation": {
+                  "const": "dense"
+                },
+                "values": {
+                  "$ref": "#/$defs/matrix"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "posteriorDraws": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "parameterOrder", "draws"],
+      "properties": {
+        "kind": {
+          "const": "posterior_draws"
+        },
+        "parameterOrder": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "draws": {
+          "$ref": "#/$defs/matrix"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+node_modules/
+.DS_Store
+.Rhistory
+.RData
+.Rproj.user/
+*.Rcheck/
+app/dist/
+app/release/
+coverage/

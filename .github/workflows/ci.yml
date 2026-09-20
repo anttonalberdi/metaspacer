@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.5.0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.3'
+      - name: Install R lint dependency
+        run: install.packages('lintr', repos = 'https://cloud.r-project.org')
+        shell: Rscript {0}
+      - run: pnpm install --frozen-lockfile
+      - name: Verify generated artifacts are current
+        run: |
+          pnpm generate
+          git diff --exit-code
+      - run: pnpm check

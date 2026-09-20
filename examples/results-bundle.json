@@ -1,0 +1,2308 @@
+{
+  "bundleVersion": "1.0.0",
+  "specVersion": "1.0.0",
+  "precomputed": {
+    "metrics": [
+      {
+        "id": "dispersion",
+        "label": "Wild oscillation",
+        "tier": "measured",
+        "estimate": {
+          "median": 0.82,
+          "lower": 0.73,
+          "upper": 0.91,
+          "level": 0.95,
+          "intervalType": "bootstrap"
+        },
+        "unit": "ordination_sd",
+        "scope": { "group": "Wild" }
+      },
+      {
+        "id": "dispersion",
+        "label": "Zoo A oscillation",
+        "tier": "measured",
+        "estimate": {
+          "median": 0.61,
+          "lower": 0.53,
+          "upper": 0.69,
+          "level": 0.95,
+          "intervalType": "bootstrap"
+        },
+        "unit": "ordination_sd",
+        "scope": { "group": "Zoo_A" }
+      },
+      {
+        "id": "dispersion",
+        "label": "Zoo B oscillation",
+        "tier": "measured",
+        "estimate": {
+          "median": 0.67,
+          "lower": 0.59,
+          "upper": 0.75,
+          "level": 0.95,
+          "intervalType": "bootstrap"
+        },
+        "unit": "ordination_sd",
+        "scope": { "group": "Zoo_B" }
+      },
+      {
+        "id": "effective_dimensionality",
+        "label": "Wild effective dimensionality",
+        "tier": "measured",
+        "estimate": {
+          "median": 2.4,
+          "lower": 2.15,
+          "upper": 2.65,
+          "level": 0.95,
+          "intervalType": "bootstrap"
+        },
+        "unit": "dimensions",
+        "scope": { "group": "Wild" }
+      },
+      {
+        "id": "schoener_d",
+        "label": "Wild–Zoo A overlap",
+        "tier": "measured",
+        "estimate": {
+          "median": 0.58,
+          "lower": 0.52,
+          "upper": 0.64,
+          "level": 0.95,
+          "intervalType": "bootstrap"
+        },
+        "unit": "proportion",
+        "scope": { "from": "Wild", "to": "Zoo_A" }
+      },
+      {
+        "id": "containment",
+        "label": "Zoo A within wild space",
+        "tier": "measured",
+        "estimate": {
+          "median": 0.46,
+          "lower": 0.39,
+          "upper": 0.53,
+          "level": 0.95,
+          "intervalType": "bootstrap"
+        },
+        "unit": "proportion",
+        "scope": { "container": "Wild", "contained": "Zoo_A" }
+      },
+      {
+        "id": "transition_distance",
+        "label": "Wild to Zoo A transition",
+        "tier": "interpolated",
+        "estimate": {
+          "median": 1.21,
+          "lower": 1.03,
+          "upper": 1.39,
+          "level": 0.95,
+          "intervalType": "confidence"
+        },
+        "unit": "ordination_distance",
+        "scope": { "from": "Wild", "to": "Zoo_A" }
+      },
+      {
+        "id": "plasticity",
+        "label": "Predicted habitat response",
+        "tier": "interpolated",
+        "estimate": {
+          "median": 0.37,
+          "lower": 0.28,
+          "upper": 0.46,
+          "level": 0.95,
+          "intervalType": "confidence"
+        },
+        "unit": "slope",
+        "scope": { "condition": "habitat_score" }
+      },
+      {
+        "id": "variance_partition",
+        "label": "Actionable variance",
+        "tier": "interpolated",
+        "estimate": {
+          "median": 0.34,
+          "lower": 0.29,
+          "upper": 0.39,
+          "level": 0.95,
+          "intervalType": "confidence"
+        },
+        "unit": "proportion",
+        "scope": { "component": "actionable" }
+      },
+      {
+        "id": "variance_partition",
+        "label": "Structural variance",
+        "tier": "interpolated",
+        "estimate": {
+          "median": 0.66,
+          "lower": 0.61,
+          "upper": 0.71,
+          "level": 0.95,
+          "intervalType": "confidence"
+        },
+        "unit": "proportion",
+        "scope": { "component": "structural" }
+      },
+      {
+        "id": "chao_coverage",
+        "label": "Wild sample coverage",
+        "tier": "measured",
+        "estimate": {
+          "median": 0.92,
+          "lower": 0.895,
+          "upper": 0.945,
+          "level": 0.95,
+          "intervalType": "bootstrap"
+        },
+        "unit": "proportion",
+        "scope": { "group": "Wild" }
+      },
+      {
+        "id": "plasticity",
+        "label": "Beyond-range habitat response",
+        "tier": "extrapolated",
+        "estimate": {
+          "median": 0.51,
+          "lower": 0.27,
+          "upper": 0.75,
+          "level": 0.95,
+          "intervalType": "confidence"
+        },
+        "unit": "slope",
+        "scope": {
+          "condition": "habitat_score",
+          "scenario": "beyond_observed_range"
+        },
+        "note": "An fMS proxy; uncertainty widens beyond the sampled condition range."
+      }
+    ],
+    "ordination": {
+      "axisLabels": ["Space 1", "Space 2"],
+      "states": [
+        {
+          "stateId": "observed-wild-1",
+          "sampleId": "S001",
+          "kind": "observed",
+          "group": "Wild",
+          "condition": { "group": "Wild", "habitat_score": -0.06 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": -0.45,
+                "lower": -0.485,
+                "upper": -0.415,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.34,
+                "lower": 0.305,
+                "upper": 0.375,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "observed-wild-2",
+          "sampleId": "S002",
+          "kind": "observed",
+          "group": "Wild",
+          "condition": { "group": "Wild", "habitat_score": -0.02 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": -0.2985,
+                "lower": -0.3335,
+                "upper": -0.2635,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.2228,
+                "lower": 0.1878,
+                "upper": 0.2578,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "observed-wild-3",
+          "sampleId": "S003",
+          "kind": "observed",
+          "group": "Wild",
+          "condition": { "group": "Wild", "habitat_score": 0.02 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": -0.2863,
+                "lower": -0.3213,
+                "upper": -0.2513,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.0429,
+                "lower": 0.0079,
+                "upper": 0.0779,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "observed-wild-4",
+          "sampleId": "S004",
+          "kind": "observed",
+          "group": "Wild",
+          "condition": { "group": "Wild", "habitat_score": 0.06 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": -0.4246,
+                "lower": -0.4596,
+                "upper": -0.3896,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.0639,
+                "lower": 0.0289,
+                "upper": 0.0989,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "observed-wild-5",
+          "sampleId": "S005",
+          "kind": "observed",
+          "group": "Wild",
+          "condition": { "group": "Wild", "habitat_score": 0.1 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": -0.5862,
+                "lower": -0.6212,
+                "upper": -0.5512,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.255,
+                "lower": 0.22,
+                "upper": 0.29,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "observed-zoo-a-1",
+          "sampleId": "S051",
+          "kind": "observed",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": -0.33 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.8715,
+                "lower": 0.8365,
+                "upper": 0.9065,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.6664,
+                "lower": 0.6314,
+                "upper": 0.7014,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "observed-zoo-a-2",
+          "sampleId": "S052",
+          "kind": "observed",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": -0.29 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.8837,
+                "lower": 0.8487,
+                "upper": 0.9187,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.4734,
+                "lower": 0.4384,
+                "upper": 0.5084,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "observed-zoo-a-3",
+          "sampleId": "S053",
+          "kind": "observed",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": -0.25 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.7454,
+                "lower": 0.7104,
+                "upper": 0.7804,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.4365,
+                "lower": 0.4015,
+                "upper": 0.4715,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "observed-zoo-a-4",
+          "sampleId": "S054",
+          "kind": "observed",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": -0.21 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.5838,
+                "lower": 0.5488,
+                "upper": 0.6188,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.6098,
+                "lower": 0.5748,
+                "upper": 0.6448,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "observed-zoo-a-5",
+          "sampleId": "S055",
+          "kind": "observed",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": -0.17 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.5474,
+                "lower": 0.5124,
+                "upper": 0.5824,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.7394,
+                "lower": 0.7044,
+                "upper": 0.7744,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "observed-zoo-b-1",
+          "sampleId": "S076",
+          "kind": "observed",
+          "group": "Zoo_B",
+          "condition": { "group": "Zoo_B", "habitat_score": 0.12 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.5837,
+                "lower": 0.5487,
+                "upper": 0.6187,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.6866,
+                "lower": -0.7216,
+                "upper": -0.6516,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "observed-zoo-b-2",
+          "sampleId": "S077",
+          "kind": "observed",
+          "group": "Zoo_B",
+          "condition": { "group": "Zoo_B", "habitat_score": 0.16 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.4454,
+                "lower": 0.4104,
+                "upper": 0.4804,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.778,
+                "lower": -0.813,
+                "upper": -0.743,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "observed-zoo-b-3",
+          "sampleId": "S078",
+          "kind": "observed",
+          "group": "Zoo_B",
+          "condition": { "group": "Zoo_B", "habitat_score": 0.2 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.2838,
+                "lower": 0.2488,
+                "upper": 0.3188,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.6379,
+                "lower": -0.6729,
+                "upper": -0.6029,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "observed-zoo-b-4",
+          "sampleId": "S079",
+          "kind": "observed",
+          "group": "Zoo_B",
+          "condition": { "group": "Zoo_B", "habitat_score": 0.24 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.2474,
+                "lower": 0.2124,
+                "upper": 0.2824,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.4716,
+                "lower": -0.5066,
+                "upper": -0.4366,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "observed-zoo-b-5",
+          "sampleId": "S080",
+          "kind": "observed",
+          "group": "Zoo_B",
+          "condition": { "group": "Zoo_B", "habitat_score": 0.28 },
+          "tier": "measured",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.3697,
+                "lower": 0.3347,
+                "upper": 0.4047,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.5227,
+                "lower": -0.5577,
+                "upper": -0.4877,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-wild-1",
+          "kind": "predicted",
+          "group": "Wild",
+          "condition": { "group": "Wild", "habitat_score": -0.7 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": -0.45,
+                "lower": -0.58,
+                "upper": -0.32,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.42,
+                "lower": 0.29,
+                "upper": 0.55,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-wild-2",
+          "kind": "predicted",
+          "group": "Wild",
+          "condition": { "group": "Wild", "habitat_score": -0.5 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": -0.2491,
+                "lower": -0.3791,
+                "upper": -0.1191,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.3636,
+                "lower": 0.2336,
+                "upper": 0.4936,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-wild-3",
+          "kind": "predicted",
+          "group": "Wild",
+          "condition": { "group": "Wild", "habitat_score": -0.3 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": -0.1701,
+                "lower": -0.3001,
+                "upper": -0.0401,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.2208,
+                "lower": 0.0908,
+                "upper": 0.3508,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-wild-4",
+          "kind": "predicted",
+          "group": "Wild",
+          "condition": { "group": "Wild", "habitat_score": -0.1 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": -0.2609,
+                "lower": -0.3909,
+                "upper": -0.1309,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.0588,
+                "lower": -0.0712,
+                "upper": 0.1888,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-wild-5",
+          "kind": "predicted",
+          "group": "Wild",
+          "condition": { "group": "Wild", "habitat_score": 0.1 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": -0.4663,
+                "lower": -0.5963,
+                "upper": -0.3363,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.0461,
+                "lower": -0.1761,
+                "upper": 0.0839,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-wild-6",
+          "kind": "predicted",
+          "group": "Wild",
+          "condition": { "group": "Wild", "habitat_score": 0.3 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": -0.6619,
+                "lower": -0.7919,
+                "upper": -0.5319,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.0447,
+                "lower": -0.1747,
+                "upper": 0.0853,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-wild-7",
+          "kind": "predicted",
+          "group": "Wild",
+          "condition": { "group": "Wild", "habitat_score": 0.5 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": -0.7289,
+                "lower": -0.8589,
+                "upper": -0.5989,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.0623,
+                "lower": -0.0677,
+                "upper": 0.1923,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-wild-8",
+          "kind": "predicted",
+          "group": "Wild",
+          "condition": { "group": "Wild", "habitat_score": 0.7 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": -0.6268,
+                "lower": -0.7568,
+                "upper": -0.4968,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.2248,
+                "lower": 0.0948,
+                "upper": 0.3548,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-a-1",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": -0.7 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.9556,
+                "lower": 0.8256,
+                "upper": 1.0856,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.7097,
+                "lower": 0.5797,
+                "upper": 0.8397,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-a-2",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": -0.5 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.9927,
+                "lower": 0.8627,
+                "upper": 1.1227,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.5491,
+                "lower": 0.4191,
+                "upper": 0.6791,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-a-3",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": -0.3 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.8643,
+                "lower": 0.7343,
+                "upper": 0.9943,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.403,
+                "lower": 0.273,
+                "upper": 0.533,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-a-4",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": -0.1 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.6484,
+                "lower": 0.5184,
+                "upper": 0.7784,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.3402,
+                "lower": 0.2102,
+                "upper": 0.4702,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-a-5",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": 0.1 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.476,
+                "lower": 0.346,
+                "upper": 0.606,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.3902,
+                "lower": 0.2602,
+                "upper": 0.5202,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-a-6",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": 0.3 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.4515,
+                "lower": 0.3215,
+                "upper": 0.5815,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.5294,
+                "lower": 0.3994,
+                "upper": 0.6594,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-a-7",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": 0.5 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.5899,
+                "lower": 0.4599,
+                "upper": 0.7199,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.6924,
+                "lower": 0.5624,
+                "upper": 0.8224,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-a-8",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": 0.7 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.8072,
+                "lower": 0.6772,
+                "upper": 0.9372,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.8026,
+                "lower": 0.6726,
+                "upper": 0.9326,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-b-1",
+          "kind": "predicted",
+          "group": "Zoo_B",
+          "condition": { "group": "Zoo_B", "habitat_score": -0.7 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.6746,
+                "lower": 0.5446,
+                "upper": 0.8046,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.7199,
+                "lower": -0.8499,
+                "upper": -0.5899,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-b-2",
+          "kind": "predicted",
+          "group": "Zoo_B",
+          "condition": { "group": "Zoo_B", "habitat_score": -0.5 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.5138,
+                "lower": 0.3838,
+                "upper": 0.6438,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.837,
+                "lower": -0.967,
+                "upper": -0.707,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-b-3",
+          "kind": "predicted",
+          "group": "Zoo_B",
+          "condition": { "group": "Zoo_B", "habitat_score": -0.3 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.2961,
+                "lower": 0.1661,
+                "upper": 0.4261,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.852,
+                "lower": -0.982,
+                "upper": -0.722,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-b-4",
+          "kind": "predicted",
+          "group": "Zoo_B",
+          "condition": { "group": "Zoo_B", "habitat_score": -0.1 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.1536,
+                "lower": 0.0236,
+                "upper": 0.2836,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.758,
+                "lower": -0.888,
+                "upper": -0.628,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-b-5",
+          "kind": "predicted",
+          "group": "Zoo_B",
+          "condition": { "group": "Zoo_B", "habitat_score": 0.1 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.1726,
+                "lower": 0.0426,
+                "upper": 0.3026,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.599,
+                "lower": -0.729,
+                "upper": -0.469,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-b-6",
+          "kind": "predicted",
+          "group": "Zoo_B",
+          "condition": { "group": "Zoo_B", "habitat_score": 0.3 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.3418,
+                "lower": 0.2118,
+                "upper": 0.4718,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.4499,
+                "lower": -0.5799,
+                "upper": -0.3199,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-b-7",
+          "kind": "predicted",
+          "group": "Zoo_B",
+          "condition": { "group": "Zoo_B", "habitat_score": 0.5 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.5584,
+                "lower": 0.4284,
+                "upper": 0.6884,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.3808,
+                "lower": -0.5108,
+                "upper": -0.2508,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "predicted-zoo-b-8",
+          "kind": "predicted",
+          "group": "Zoo_B",
+          "condition": { "group": "Zoo_B", "habitat_score": 0.7 },
+          "tier": "interpolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.691,
+                "lower": 0.561,
+                "upper": 0.821,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": -0.4242,
+                "lower": -0.5542,
+                "upper": -0.2942,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": true,
+            "distanceToDomain": 0
+          }
+        },
+        {
+          "stateId": "extrapolated-zoo-a-1",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": 1.1 },
+          "tier": "extrapolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 1.1,
+                "lower": 0.72,
+                "upper": 1.48,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 1.22,
+                "lower": 0.84,
+                "upper": 1.6,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": false,
+            "distanceToDomain": 0.1
+          }
+        },
+        {
+          "stateId": "extrapolated-zoo-a-2",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": 1.18 },
+          "tier": "extrapolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 1.3742,
+                "lower": 0.9692,
+                "upper": 1.7792,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 1.1341,
+                "lower": 0.7291,
+                "upper": 1.5391,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": false,
+            "distanceToDomain": 0.18
+          }
+        },
+        {
+          "stateId": "extrapolated-zoo-a-3",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": 1.26 },
+          "tier": "extrapolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 1.4408,
+                "lower": 1.0108,
+                "upper": 1.8708,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.9226,
+                "lower": 0.4926,
+                "upper": 1.3526,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": false,
+            "distanceToDomain": 0.26
+          }
+        },
+        {
+          "stateId": "extrapolated-zoo-a-4",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": 1.34 },
+          "tier": "extrapolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 1.2496,
+                "lower": 0.7946,
+                "upper": 1.7046,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.699,
+                "lower": 0.244,
+                "upper": 1.154,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": false,
+            "distanceToDomain": 0.34
+          }
+        },
+        {
+          "stateId": "extrapolated-zoo-a-5",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": 1.42 },
+          "tier": "extrapolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.9451,
+                "lower": 0.4651,
+                "upper": 1.4251,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.5832,
+                "lower": 0.1032,
+                "upper": 1.0632,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": false,
+            "distanceToDomain": 0.42
+          }
+        },
+        {
+          "stateId": "extrapolated-zoo-a-6",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": 1.5 },
+          "tier": "extrapolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.7579,
+                "lower": 0.2529,
+                "upper": 1.2629,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.6374,
+                "lower": 0.1324,
+                "upper": 1.1424,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": false,
+            "distanceToDomain": 0.5
+          }
+        },
+        {
+          "stateId": "extrapolated-zoo-a-7",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": 1.58 },
+          "tier": "extrapolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 0.8295,
+                "lower": 0.2995,
+                "upper": 1.3595,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 0.8325,
+                "lower": 0.3025,
+                "upper": 1.3625,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": false,
+            "distanceToDomain": 0.58
+          }
+        },
+        {
+          "stateId": "extrapolated-zoo-a-8",
+          "kind": "predicted",
+          "group": "Zoo_A",
+          "condition": { "group": "Zoo_A", "habitat_score": 1.66 },
+          "tier": "extrapolated",
+          "coordinates": [
+            {
+              "axis": "Space 1",
+              "estimate": {
+                "median": 1.1059,
+                "lower": 0.5509,
+                "upper": 1.6609,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            },
+            {
+              "axis": "Space 2",
+              "estimate": {
+                "median": 1.0639,
+                "lower": 0.5089,
+                "upper": 1.6189,
+                "level": 0.95,
+                "intervalType": "empirical"
+              }
+            }
+          ],
+          "geometry": {
+            "method": "mixed_hull_range",
+            "insideSampledDomain": false,
+            "distanceToDomain": 0.66
+          }
+        }
+      ]
+    }
+  },
+  "fittedParameters": {
+    "dimensions": {
+      "responses": 40,
+      "coefficients": 4,
+      "latentVariables": 2,
+      "projectionAxes": 2
+    },
+    "responseFeatures": [
+      "MAG_001",
+      "MAG_002",
+      "MAG_003",
+      "MAG_004",
+      "MAG_005",
+      "MAG_006",
+      "MAG_007",
+      "MAG_008",
+      "MAG_009",
+      "MAG_010",
+      "MAG_011",
+      "MAG_012",
+      "MAG_013",
+      "MAG_014",
+      "MAG_015",
+      "MAG_016",
+      "MAG_017",
+      "MAG_018",
+      "MAG_019",
+      "MAG_020",
+      "MAG_021",
+      "MAG_022",
+      "MAG_023",
+      "MAG_024",
+      "MAG_025",
+      "MAG_026",
+      "MAG_027",
+      "MAG_028",
+      "MAG_029",
+      "MAG_030",
+      "MAG_031",
+      "MAG_032",
+      "MAG_033",
+      "MAG_034",
+      "MAG_035",
+      "MAG_036",
+      "MAG_037",
+      "MAG_038",
+      "MAG_039",
+      "MAG_040"
+    ],
+    "coefficientNames": [
+      "(Intercept)",
+      "groupZoo_A",
+      "groupZoo_B",
+      "habitat_score"
+    ],
+    "design": {
+      "predictors": [
+        {
+          "name": "group",
+          "type": "categorical",
+          "levels": ["Wild", "Zoo_A", "Zoo_B"],
+          "referenceLevel": "Wild"
+        },
+        {
+          "name": "habitat_score",
+          "type": "continuous",
+          "center": 0,
+          "scale": 1
+        }
+      ],
+      "columns": [
+        { "name": "(Intercept)", "factors": [] },
+        {
+          "name": "groupZoo_A",
+          "factors": [
+            { "predictor": "group", "operation": "indicator", "level": "Zoo_A" }
+          ]
+        },
+        {
+          "name": "groupZoo_B",
+          "factors": [
+            { "predictor": "group", "operation": "indicator", "level": "Zoo_B" }
+          ]
+        },
+        {
+          "name": "habitat_score",
+          "factors": [{ "predictor": "habitat_score", "operation": "identity" }]
+        }
+      ]
+    },
+    "offset": {
+      "librarySize": {
+        "source": "count_table_row_sum",
+        "transform": "log",
+        "referenceValue": 1000
+      },
+      "genomeSizeCorrection": false,
+      "completenessCorrection": false
+    },
+    "beta": [
+      [
+        1.4, 1.435, 1.47, 1.505, 1.54, 1.575, 1.61, 1.645, 1.68, 1.715, 1.75,
+        1.785, 1.82, 1.855, 1.89, 1.925, 1.96, 1.995, 2.03, 2.065, 2.1, 2.135,
+        2.17, 2.205, 2.24, 2.275, 2.31, 2.345, 2.38, 2.415, 2.45, 2.485, 2.52,
+        2.555, 2.59, 2.625, 2.66, 2.695, 2.73, 2.765
+      ],
+      [
+        -0.32, -0.304, -0.288, -0.272, -0.256, -0.24, -0.224, -0.208, -0.192,
+        -0.176, -0.16, -0.144, -0.128, -0.112, -0.096, -0.08, -0.064, -0.048,
+        -0.032, -0.016, 0, 0.016, 0.032, 0.048, 0.064, 0.08, 0.096, 0.112,
+        0.128, 0.144, 0.16, 0.176, 0.192, 0.208, 0.224, 0.24, 0.256, 0.272,
+        0.288, 0.304
+      ],
+      [
+        0.26, 0.247, 0.234, 0.221, 0.208, 0.195, 0.182, 0.169, 0.156, 0.143,
+        0.13, 0.117, 0.104, 0.091, 0.078, 0.065, 0.052, 0.039, 0.026, 0.013, 0,
+        -0.013, -0.026, -0.039, -0.052, -0.065, -0.078, -0.091, -0.104, -0.117,
+        -0.13, -0.143, -0.156, -0.169, -0.182, -0.195, -0.208, -0.221, -0.234,
+        -0.247
+      ],
+      [
+        -0.2, -0.19, -0.18, -0.17, -0.16, -0.15, -0.14, -0.13, -0.12, -0.11,
+        -0.1, -0.09, -0.08, -0.07, -0.06, -0.05, -0.04, -0.03, -0.02, -0.01, 0,
+        0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.11, 0.12,
+        0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19
+      ]
+    ],
+    "latentLoadings": [
+      [
+        0.0894, 0.1752, 0.2541, 0.3228, 0.3787, 0.4194, 0.4435, 0.4498, 0.4382,
+        0.4092, 0.3638, 0.304, 0.232, 0.1507, 0.0635, -0.0263, -0.115, -0.1991,
+        -0.2753, -0.3406, -0.3922, -0.4282, -0.4472, -0.4483, -0.4315, -0.3976,
+        -0.3477, -0.2841, -0.2091, -0.1257, -0.0374, 0.0524, 0.1402, 0.2224,
+        0.2956, 0.3572, 0.4044, 0.4356, 0.4493, 0.4452
+      ],
+      [
+        0.3945, 0.378, 0.351, 0.3144, 0.269, 0.2161, 0.1573, 0.0941, 0.0283,
+        -0.0383, -0.1038, -0.1665, -0.2245, -0.2763, -0.3205, -0.3557, -0.3811,
+        -0.396, -0.3999, -0.3927, -0.3746, -0.3461, -0.3081, -0.2615, -0.2076,
+        -0.148, -0.0843, -0.0183, 0.0483, 0.1135, 0.1755, 0.2327, 0.2835,
+        0.3264, 0.3602, 0.3841, 0.3973, 0.3995, 0.3906, 0.3709
+      ]
+    ],
+    "latentDistribution": {
+      "mean": [0, 0],
+      "covariance": [
+        [1, 0.12],
+        [0.12, 1]
+      ]
+    },
+    "projection": {
+      "center": [
+        2.05, 2.068, 2.086, 2.104, 2.122, 2.14, 2.158, 2.176, 2.194, 2.212,
+        2.23, 2.248, 2.266, 2.284, 2.302, 2.32, 2.338, 2.356, 2.374, 2.392,
+        2.41, 2.428, 2.446, 2.464, 2.482, 2.5, 2.518, 2.536, 2.554, 2.572, 2.59,
+        2.608, 2.626, 2.644, 2.662, 2.68, 2.698, 2.716, 2.734, 2.752
+      ],
+      "rotation": [
+        [0.0356, 0.248],
+        [0.0705, 0.2422],
+        [0.1039, 0.2326],
+        [0.1352, 0.2194],
+        [0.1638, 0.2027],
+        [0.189, 0.1829],
+        [0.2104, 0.1602],
+        [0.2275, 0.1351],
+        [0.2399, 0.1078],
+        [0.2475, 0.0788],
+        [0.25, 0.0486],
+        [0.2474, 0.0177],
+        [0.2398, -0.0135],
+        [0.2273, -0.0446],
+        [0.2102, -0.0749],
+        [0.1888, -0.104],
+        [0.1635, -0.1316],
+        [0.1349, -0.157],
+        [0.1036, -0.1801],
+        [0.0702, -0.2003],
+        [0.0353, -0.2174],
+        [-0.0003, -0.2311],
+        [-0.0359, -0.2412],
+        [-0.0708, -0.2475],
+        [-0.1042, -0.25],
+        [-0.1355, -0.2485],
+        [-0.164, -0.2432],
+        [-0.1892, -0.2341],
+        [-0.2105, -0.2214],
+        [-0.2276, -0.2051],
+        [-0.24, -0.1857],
+        [-0.2475, -0.1634],
+        [-0.25, -0.1385],
+        [-0.2474, -0.1115],
+        [-0.2397, -0.0828],
+        [-0.2272, -0.0527],
+        [-0.21, -0.0218],
+        [-0.1886, 0.0094],
+        [-0.1633, 0.0405],
+        [-0.1347, 0.0709]
+      ]
+    },
+    "family": {
+      "name": "negative_binomial",
+      "link": "log",
+      "dispersion": [
+        5.5, 5.9, 6.3, 6.7, 7.1, 7.5, 7.9, 5.5, 5.9, 6.3, 6.7, 7.1, 7.5, 7.9,
+        5.5, 5.9, 6.3, 6.7, 7.1, 7.5, 7.9, 5.5, 5.9, 6.3, 6.7, 7.1, 7.5, 7.9,
+        5.5, 5.9, 6.3, 6.7, 7.1, 7.5, 7.9, 5.5, 5.9, 6.3, 6.7, 7.1
+      ]
+    },
+    "uncertainty": {
+      "kind": "sampling_covariance",
+      "parameterOrder": [
+        "Beta[(Intercept),MAG_001]",
+        "Beta[(Intercept),MAG_002]",
+        "Beta[(Intercept),MAG_003]",
+        "Beta[(Intercept),MAG_004]",
+        "Beta[(Intercept),MAG_005]",
+        "Beta[(Intercept),MAG_006]",
+        "Beta[(Intercept),MAG_007]",
+        "Beta[(Intercept),MAG_008]",
+        "Beta[(Intercept),MAG_009]",
+        "Beta[(Intercept),MAG_010]",
+        "Beta[(Intercept),MAG_011]",
+        "Beta[(Intercept),MAG_012]",
+        "Beta[(Intercept),MAG_013]",
+        "Beta[(Intercept),MAG_014]",
+        "Beta[(Intercept),MAG_015]",
+        "Beta[(Intercept),MAG_016]",
+        "Beta[(Intercept),MAG_017]",
+        "Beta[(Intercept),MAG_018]",
+        "Beta[(Intercept),MAG_019]",
+        "Beta[(Intercept),MAG_020]",
+        "Beta[(Intercept),MAG_021]",
+        "Beta[(Intercept),MAG_022]",
+        "Beta[(Intercept),MAG_023]",
+        "Beta[(Intercept),MAG_024]",
+        "Beta[(Intercept),MAG_025]",
+        "Beta[(Intercept),MAG_026]",
+        "Beta[(Intercept),MAG_027]",
+        "Beta[(Intercept),MAG_028]",
+        "Beta[(Intercept),MAG_029]",
+        "Beta[(Intercept),MAG_030]",
+        "Beta[(Intercept),MAG_031]",
+        "Beta[(Intercept),MAG_032]",
+        "Beta[(Intercept),MAG_033]",
+        "Beta[(Intercept),MAG_034]",
+        "Beta[(Intercept),MAG_035]",
+        "Beta[(Intercept),MAG_036]",
+        "Beta[(Intercept),MAG_037]",
+        "Beta[(Intercept),MAG_038]",
+        "Beta[(Intercept),MAG_039]",
+        "Beta[(Intercept),MAG_040]",
+        "Beta[groupZoo_A,MAG_001]",
+        "Beta[groupZoo_A,MAG_002]",
+        "Beta[groupZoo_A,MAG_003]",
+        "Beta[groupZoo_A,MAG_004]",
+        "Beta[groupZoo_A,MAG_005]",
+        "Beta[groupZoo_A,MAG_006]",
+        "Beta[groupZoo_A,MAG_007]",
+        "Beta[groupZoo_A,MAG_008]",
+        "Beta[groupZoo_A,MAG_009]",
+        "Beta[groupZoo_A,MAG_010]",
+        "Beta[groupZoo_A,MAG_011]",
+        "Beta[groupZoo_A,MAG_012]",
+        "Beta[groupZoo_A,MAG_013]",
+        "Beta[groupZoo_A,MAG_014]",
+        "Beta[groupZoo_A,MAG_015]",
+        "Beta[groupZoo_A,MAG_016]",
+        "Beta[groupZoo_A,MAG_017]",
+        "Beta[groupZoo_A,MAG_018]",
+        "Beta[groupZoo_A,MAG_019]",
+        "Beta[groupZoo_A,MAG_020]",
+        "Beta[groupZoo_A,MAG_021]",
+        "Beta[groupZoo_A,MAG_022]",
+        "Beta[groupZoo_A,MAG_023]",
+        "Beta[groupZoo_A,MAG_024]",
+        "Beta[groupZoo_A,MAG_025]",
+        "Beta[groupZoo_A,MAG_026]",
+        "Beta[groupZoo_A,MAG_027]",
+        "Beta[groupZoo_A,MAG_028]",
+        "Beta[groupZoo_A,MAG_029]",
+        "Beta[groupZoo_A,MAG_030]",
+        "Beta[groupZoo_A,MAG_031]",
+        "Beta[groupZoo_A,MAG_032]",
+        "Beta[groupZoo_A,MAG_033]",
+        "Beta[groupZoo_A,MAG_034]",
+        "Beta[groupZoo_A,MAG_035]",
+        "Beta[groupZoo_A,MAG_036]",
+        "Beta[groupZoo_A,MAG_037]",
+        "Beta[groupZoo_A,MAG_038]",
+        "Beta[groupZoo_A,MAG_039]",
+        "Beta[groupZoo_A,MAG_040]",
+        "Beta[groupZoo_B,MAG_001]",
+        "Beta[groupZoo_B,MAG_002]",
+        "Beta[groupZoo_B,MAG_003]",
+        "Beta[groupZoo_B,MAG_004]",
+        "Beta[groupZoo_B,MAG_005]",
+        "Beta[groupZoo_B,MAG_006]",
+        "Beta[groupZoo_B,MAG_007]",
+        "Beta[groupZoo_B,MAG_008]",
+        "Beta[groupZoo_B,MAG_009]",
+        "Beta[groupZoo_B,MAG_010]",
+        "Beta[groupZoo_B,MAG_011]",
+        "Beta[groupZoo_B,MAG_012]",
+        "Beta[groupZoo_B,MAG_013]",
+        "Beta[groupZoo_B,MAG_014]",
+        "Beta[groupZoo_B,MAG_015]",
+        "Beta[groupZoo_B,MAG_016]",
+        "Beta[groupZoo_B,MAG_017]",
+        "Beta[groupZoo_B,MAG_018]",
+        "Beta[groupZoo_B,MAG_019]",
+        "Beta[groupZoo_B,MAG_020]",
+        "Beta[groupZoo_B,MAG_021]",
+        "Beta[groupZoo_B,MAG_022]",
+        "Beta[groupZoo_B,MAG_023]",
+        "Beta[groupZoo_B,MAG_024]",
+        "Beta[groupZoo_B,MAG_025]",
+        "Beta[groupZoo_B,MAG_026]",
+        "Beta[groupZoo_B,MAG_027]",
+        "Beta[groupZoo_B,MAG_028]",
+        "Beta[groupZoo_B,MAG_029]",
+        "Beta[groupZoo_B,MAG_030]",
+        "Beta[groupZoo_B,MAG_031]",
+        "Beta[groupZoo_B,MAG_032]",
+        "Beta[groupZoo_B,MAG_033]",
+        "Beta[groupZoo_B,MAG_034]",
+        "Beta[groupZoo_B,MAG_035]",
+        "Beta[groupZoo_B,MAG_036]",
+        "Beta[groupZoo_B,MAG_037]",
+        "Beta[groupZoo_B,MAG_038]",
+        "Beta[groupZoo_B,MAG_039]",
+        "Beta[groupZoo_B,MAG_040]",
+        "Beta[habitat_score,MAG_001]",
+        "Beta[habitat_score,MAG_002]",
+        "Beta[habitat_score,MAG_003]",
+        "Beta[habitat_score,MAG_004]",
+        "Beta[habitat_score,MAG_005]",
+        "Beta[habitat_score,MAG_006]",
+        "Beta[habitat_score,MAG_007]",
+        "Beta[habitat_score,MAG_008]",
+        "Beta[habitat_score,MAG_009]",
+        "Beta[habitat_score,MAG_010]",
+        "Beta[habitat_score,MAG_011]",
+        "Beta[habitat_score,MAG_012]",
+        "Beta[habitat_score,MAG_013]",
+        "Beta[habitat_score,MAG_014]",
+        "Beta[habitat_score,MAG_015]",
+        "Beta[habitat_score,MAG_016]",
+        "Beta[habitat_score,MAG_017]",
+        "Beta[habitat_score,MAG_018]",
+        "Beta[habitat_score,MAG_019]",
+        "Beta[habitat_score,MAG_020]",
+        "Beta[habitat_score,MAG_021]",
+        "Beta[habitat_score,MAG_022]",
+        "Beta[habitat_score,MAG_023]",
+        "Beta[habitat_score,MAG_024]",
+        "Beta[habitat_score,MAG_025]",
+        "Beta[habitat_score,MAG_026]",
+        "Beta[habitat_score,MAG_027]",
+        "Beta[habitat_score,MAG_028]",
+        "Beta[habitat_score,MAG_029]",
+        "Beta[habitat_score,MAG_030]",
+        "Beta[habitat_score,MAG_031]",
+        "Beta[habitat_score,MAG_032]",
+        "Beta[habitat_score,MAG_033]",
+        "Beta[habitat_score,MAG_034]",
+        "Beta[habitat_score,MAG_035]",
+        "Beta[habitat_score,MAG_036]",
+        "Beta[habitat_score,MAG_037]",
+        "Beta[habitat_score,MAG_038]",
+        "Beta[habitat_score,MAG_039]",
+        "Beta[habitat_score,MAG_040]",
+        "Lambda[LV1,MAG_001]",
+        "Lambda[LV1,MAG_002]",
+        "Lambda[LV1,MAG_003]",
+        "Lambda[LV1,MAG_004]",
+        "Lambda[LV1,MAG_005]",
+        "Lambda[LV1,MAG_006]",
+        "Lambda[LV1,MAG_007]",
+        "Lambda[LV1,MAG_008]",
+        "Lambda[LV1,MAG_009]",
+        "Lambda[LV1,MAG_010]",
+        "Lambda[LV1,MAG_011]",
+        "Lambda[LV1,MAG_012]",
+        "Lambda[LV1,MAG_013]",
+        "Lambda[LV1,MAG_014]",
+        "Lambda[LV1,MAG_015]",
+        "Lambda[LV1,MAG_016]",
+        "Lambda[LV1,MAG_017]",
+        "Lambda[LV1,MAG_018]",
+        "Lambda[LV1,MAG_019]",
+        "Lambda[LV1,MAG_020]",
+        "Lambda[LV1,MAG_021]",
+        "Lambda[LV1,MAG_022]",
+        "Lambda[LV1,MAG_023]",
+        "Lambda[LV1,MAG_024]",
+        "Lambda[LV1,MAG_025]",
+        "Lambda[LV1,MAG_026]",
+        "Lambda[LV1,MAG_027]",
+        "Lambda[LV1,MAG_028]",
+        "Lambda[LV1,MAG_029]",
+        "Lambda[LV1,MAG_030]",
+        "Lambda[LV1,MAG_031]",
+        "Lambda[LV1,MAG_032]",
+        "Lambda[LV1,MAG_033]",
+        "Lambda[LV1,MAG_034]",
+        "Lambda[LV1,MAG_035]",
+        "Lambda[LV1,MAG_036]",
+        "Lambda[LV1,MAG_037]",
+        "Lambda[LV1,MAG_038]",
+        "Lambda[LV1,MAG_039]",
+        "Lambda[LV1,MAG_040]",
+        "Lambda[LV2,MAG_001]",
+        "Lambda[LV2,MAG_002]",
+        "Lambda[LV2,MAG_003]",
+        "Lambda[LV2,MAG_004]",
+        "Lambda[LV2,MAG_005]",
+        "Lambda[LV2,MAG_006]",
+        "Lambda[LV2,MAG_007]",
+        "Lambda[LV2,MAG_008]",
+        "Lambda[LV2,MAG_009]",
+        "Lambda[LV2,MAG_010]",
+        "Lambda[LV2,MAG_011]",
+        "Lambda[LV2,MAG_012]",
+        "Lambda[LV2,MAG_013]",
+        "Lambda[LV2,MAG_014]",
+        "Lambda[LV2,MAG_015]",
+        "Lambda[LV2,MAG_016]",
+        "Lambda[LV2,MAG_017]",
+        "Lambda[LV2,MAG_018]",
+        "Lambda[LV2,MAG_019]",
+        "Lambda[LV2,MAG_020]",
+        "Lambda[LV2,MAG_021]",
+        "Lambda[LV2,MAG_022]",
+        "Lambda[LV2,MAG_023]",
+        "Lambda[LV2,MAG_024]",
+        "Lambda[LV2,MAG_025]",
+        "Lambda[LV2,MAG_026]",
+        "Lambda[LV2,MAG_027]",
+        "Lambda[LV2,MAG_028]",
+        "Lambda[LV2,MAG_029]",
+        "Lambda[LV2,MAG_030]",
+        "Lambda[LV2,MAG_031]",
+        "Lambda[LV2,MAG_032]",
+        "Lambda[LV2,MAG_033]",
+        "Lambda[LV2,MAG_034]",
+        "Lambda[LV2,MAG_035]",
+        "Lambda[LV2,MAG_036]",
+        "Lambda[LV2,MAG_037]",
+        "Lambda[LV2,MAG_038]",
+        "Lambda[LV2,MAG_039]",
+        "Lambda[LV2,MAG_040]"
+      ],
+      "covariance": {
+        "representation": "diagonal",
+        "diagonal": [
+          0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02, 0.012,
+          0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02, 0.012, 0.013,
+          0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02, 0.012, 0.013, 0.014,
+          0.015, 0.016, 0.017, 0.018, 0.019, 0.02, 0.012, 0.013, 0.014, 0.015,
+          0.016, 0.017, 0.018, 0.019, 0.02, 0.012, 0.013, 0.014, 0.015, 0.016,
+          0.017, 0.018, 0.019, 0.02, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017,
+          0.018, 0.019, 0.02, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018,
+          0.019, 0.02, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019,
+          0.02, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02,
+          0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02, 0.012,
+          0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02, 0.012, 0.013,
+          0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02, 0.012, 0.013, 0.014,
+          0.015, 0.016, 0.017, 0.018, 0.019, 0.02, 0.012, 0.013, 0.014, 0.015,
+          0.016, 0.017, 0.018, 0.019, 0.02, 0.012, 0.013, 0.014, 0.015, 0.016,
+          0.017, 0.018, 0.019, 0.02, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017,
+          0.018, 0.019, 0.02, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018,
+          0.019, 0.02, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019,
+          0.02, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02,
+          0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02, 0.012,
+          0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02, 0.012, 0.013,
+          0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02, 0.012, 0.013, 0.014,
+          0.015, 0.016, 0.017, 0.018, 0.019, 0.02, 0.012, 0.013, 0.014, 0.015,
+          0.016, 0.017, 0.018, 0.019, 0.02, 0.012, 0.013, 0.014, 0.015, 0.016,
+          0.017, 0.018, 0.019, 0.02, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017
+        ]
+      }
+    }
+  },
+  "provenance": {
+    "specSha256": "916bb6440ffcdda5d12b7224120a8bc6450ef2960039dfa4e1bcee051e0b411c",
+    "dataSha256": {
+      "countTable": "bbf543c2c046e00be713971a532c3bc8a0cc7beaea3927fe555789d6bc1adaaa",
+      "sampleMetadata": "6da4a182132ff96b4235297479b80f297e94092cdcb8d1f8c9ce11f7b9475aa5",
+      "featureMetadata": "da3cd87064e11bc47888f369eeff1f8f887a11d38f7f94fef562727bd552f58c",
+      "phylogeneticTree": "53b2f290e03407fda47c54b811e846d26cd7f3017372ff17a7345b0414041ae0"
+    },
+    "engine": { "name": "gllvm", "version": "contract-fixture-not-fitted" },
+    "metaspacerVersion": "0.1.0-example",
+    "seed": 20250920,
+    "createdAt": "2026-09-20T00:00:00Z",
+    "tierDefinitions": {
+      "measured": "Computed directly from observed samples.",
+      "interpolated": "Model prediction inside the geometrically sampled condition domain.",
+      "extrapolated": "Model prediction outside the geometrically sampled condition domain; an fMS proxy only."
+    },
+    "extrapolationMethod": {
+      "name": "mixed_hull_range",
+      "conditionColumns": ["group", "habitat_score"]
+    },
+    "warnings": [
+      "This golden bundle is a deterministic contract fixture, not the output of a fitted model.",
+      "Extrapolated states are fMS proxies and do not establish a genetic ceiling."
+    ]
+  }
+}

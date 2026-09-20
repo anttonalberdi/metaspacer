@@ -1,0 +1,507 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://metaspacer.org/schemas/model-spec/1.0.0",
+  "title": "ModelSpec",
+  "description": "A portable, declarative recipe for one metaspacer model run.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "specVersion",
+    "data",
+    "roles",
+    "model",
+    "engine",
+    "resources",
+    "seed",
+    "output"
+  ],
+  "properties": {
+    "specVersion": {
+      "const": "1.0.0",
+      "description": "Version of the model-spec contract, not the application version."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["countTable", "sampleMetadata", "featureMetadata"],
+      "properties": {
+        "countTable": {
+          "$ref": "#/$defs/tableReference"
+        },
+        "sampleMetadata": {
+          "$ref": "#/$defs/tableReference"
+        },
+        "featureMetadata": {
+          "$ref": "#/$defs/tableReference"
+        },
+        "phylogeneticTree": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/treeReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "roles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["response", "samples", "features"],
+      "properties": {
+        "response": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["table", "sampleIdColumn"],
+          "properties": {
+            "table": {
+              "const": "countTable"
+            },
+            "sampleIdColumn": {
+              "$ref": "#/$defs/columnName"
+            }
+          }
+        },
+        "samples": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["table", "sampleIdColumn", "focalVariables"],
+          "properties": {
+            "table": {
+              "const": "sampleMetadata"
+            },
+            "sampleIdColumn": {
+              "$ref": "#/$defs/columnName"
+            },
+            "focalVariables": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["column", "type"],
+                "properties": {
+                  "column": {
+                    "$ref": "#/$defs/columnName"
+                  },
+                  "type": {
+                    "enum": ["continuous", "categorical", "binary"]
+                  },
+                  "referenceLevel": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "features": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "table",
+            "featureIdColumn",
+            "taxonomyColumns",
+            "functionalTraits",
+            "technicalQc"
+          ],
+          "properties": {
+            "table": {
+              "const": "featureMetadata"
+            },
+            "featureIdColumn": {
+              "$ref": "#/$defs/columnName"
+            },
+            "taxonomyColumns": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/columnName"
+              }
+            },
+            "functionalTraits": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/typedColumn"
+              }
+            },
+            "technicalQc": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "completenessColumn",
+                "contaminationColumn",
+                "genomeSizeColumn",
+                "filters",
+                "genomeSizeHasEcologicalRole"
+              ],
+              "properties": {
+                "completenessColumn": {
+                  "$ref": "#/$defs/columnName"
+                },
+                "contaminationColumn": {
+                  "$ref": "#/$defs/columnName"
+                },
+                "genomeSizeColumn": {
+                  "$ref": "#/$defs/columnName"
+                },
+                "filters": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["minimumCompleteness", "maximumContamination"],
+                  "properties": {
+                    "minimumCompleteness": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "maximumContamination": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    }
+                  }
+                },
+                "genomeSizeHasEcologicalRole": {
+                  "type": "boolean",
+                  "description": "Must be true before genome size may also appear in functionalTraits."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "family",
+        "offset",
+        "latentVariables",
+        "phylogeneticRandomEffect",
+        "fourthCorner"
+      ],
+      "properties": {
+        "family": {
+          "enum": ["negative_binomial", "zinb"]
+        },
+        "offset": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "librarySize",
+            "genomeSizeCorrection",
+            "completenessCorrection"
+          ],
+          "properties": {
+            "librarySize": {
+              "const": true,
+              "description": "Count models always include a log library-size effort offset."
+            },
+            "genomeSizeCorrection": {
+              "type": "boolean"
+            },
+            "completenessCorrection": {
+              "type": "boolean"
+            }
+          }
+        },
+        "latentVariables": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 50
+        },
+        "phylogeneticRandomEffect": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "enabled",
+            "covariance",
+            "approximation",
+            "preserveTipOrder"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "covariance": {
+              "enum": ["vcv", "cophenetic"]
+            },
+            "approximation": {
+              "enum": ["full", "nngp"]
+            },
+            "preserveTipOrder": {
+              "const": true
+            }
+          }
+        },
+        "fourthCorner": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["enabled", "formula"],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "formula": {
+              "type": ["string", "null"],
+              "description": "A declarative fourth-corner formula over named focal variables and traits."
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "enabled": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "formula": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "formula": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "engine": {
+      "enum": ["gllvm", "hmsc", "hmsc_hpc", "vae"]
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cpuThreads", "memorySoftLimitMB"],
+      "properties": {
+        "cpuThreads": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cpuAffinity": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "gpuDevice": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gpuMemoryLimitMB": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "memorySoftLimitMB": {
+          "type": "integer",
+          "minimum": 256
+        },
+        "memoryHardLimitMB": {
+          "type": "integer",
+          "minimum": 256
+        }
+      }
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "overwrite"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "overwrite": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "engine": {
+            "enum": ["gllvm", "hmsc"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "resources": {
+            "type": "object",
+            "properties": {
+              "gpuDevice": false,
+              "gpuMemoryLimitMB": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "model": {
+            "type": "object",
+            "properties": {
+              "phylogeneticRandomEffect": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": ["phylogeneticTree"],
+            "properties": {
+              "phylogeneticTree": {
+                "$ref": "#/$defs/treeReference"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "model": {
+            "type": "object",
+            "properties": {
+              "fourthCorner": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "roles": {
+            "type": "object",
+            "properties": {
+              "features": {
+                "type": "object",
+                "properties": {
+                  "functionalTraits": {
+                    "type": "array",
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "columnName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:[\\\\/]).+",
+      "description": "A path relative to the portable job root."
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "tableReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "format"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "format": {
+          "enum": ["csv", "tsv", "parquet"]
+        }
+      }
+    },
+    "treeReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "format"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "format": {
+          "const": "newick"
+        }
+      }
+    },
+    "typedColumn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["column", "type"],
+      "properties": {
+        "column": {
+          "$ref": "#/$defs/columnName"
+        },
+        "type": {
+          "enum": ["continuous", "categorical", "binary"]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "specVersion": "1.0.0",
+  "name": "Captive and wild golden example",
+  "description": "A deterministic 50 Wild + 25 Zoo A + 25 Zoo B example with 40 MAG response features.",
+  "data": {
+    "countTable": {
+      "path": "data/counts.csv",
+      "sha256": "bbf543c2c046e00be713971a532c3bc8a0cc7beaea3927fe555789d6bc1adaaa",
+      "format": "csv"
+    },
+    "sampleMetadata": {
+      "path": "data/sample-metadata.csv",
+      "sha256": "6da4a182132ff96b4235297479b80f297e94092cdcb8d1f8c9ce11f7b9475aa5",
+      "format": "csv"
+    },
+    "featureMetadata": {
+      "path": "data/feature-metadata.csv",
+      "sha256": "da3cd87064e11bc47888f369eeff1f8f887a11d38f7f94fef562727bd552f58c",
+      "format": "csv"
+    },
+    "phylogeneticTree": {
+      "path": "data/features.nwk",
+      "sha256": "53b2f290e03407fda47c54b811e846d26cd7f3017372ff17a7345b0414041ae0",
+      "format": "newick"
+    }
+  },
+  "roles": {
+    "response": { "table": "countTable", "sampleIdColumn": "sample_id" },
+    "samples": {
+      "table": "sampleMetadata",
+      "sampleIdColumn": "sample_id",
+      "focalVariables": [
+        { "column": "group", "type": "categorical", "referenceLevel": "Wild" },
+        { "column": "habitat_score", "type": "continuous" }
+      ]
+    },
+    "features": {
+      "table": "featureMetadata",
+      "featureIdColumn": "feature_id",
+      "taxonomyColumns": ["phylum", "genus"],
+      "functionalTraits": [
+        { "column": "oxygen_tolerance", "type": "continuous" },
+        { "column": "metabolic_breadth", "type": "continuous" }
+      ],
+      "technicalQc": {
+        "completenessColumn": "completeness_pct",
+        "contaminationColumn": "contamination_pct",
+        "genomeSizeColumn": "genome_size_bp",
+        "filters": { "minimumCompleteness": 90, "maximumContamination": 5 },
+        "genomeSizeHasEcologicalRole": false
+      }
+    }
+  },
+  "model": {
+    "family": "negative_binomial",
+    "offset": {
+      "librarySize": true,
+      "genomeSizeCorrection": false,
+      "completenessCorrection": false
+    },
+    "latentVariables": 2,
+    "phylogeneticRandomEffect": {
+      "enabled": true,
+      "covariance": "vcv",
+      "approximation": "full",
+      "preserveTipOrder": true
+    },
+    "fourthCorner": {
+      "enabled": true,
+      "formula": "~ group * (oxygen_tolerance + metabolic_breadth)"
+    }
+  },
+  "engine": "gllvm",
+  "resources": {
+    "cpuThreads": 4,
+    "cpuAffinity": [0, 1, 2, 3],
+    "memorySoftLimitMB": 4096,
+    "memoryHardLimitMB": 6144
+  },
+  "seed": 20250920,
+  "output": { "path": "out/golden-example", "overwrite": false }
+}
