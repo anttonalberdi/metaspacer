@@ -7,8 +7,8 @@ uncertainty to every reported metric and prediction.
 
 ## Project status
 
-Development has completed **M2 — R package skeleton + gllvm backend**. The
-repository currently contains:
+Development has completed **M3 — tier-tagged metric extractor**. The repository
+currently contains:
 
 - versioned JSON Schemas for model specifications and results bundles;
 - generated TypeScript types derived from those schemas;
@@ -19,11 +19,15 @@ repository currently contains:
   interface; and
 - a CPU gllvm backend for negative-binomial/ZINB fits, offsets, fourth-corner
   traits, phylogenetic random effects, uncertainty extraction, and conforming
-  bundle output.
+  bundle output;
+- deterministic bootstrap intervals for measured dispersion, effective
+  dimensionality, coverage, overlap, and containment;
+- asymptotic sampling intervals for transition, plasticity, and the actionable
+  vs structural variance split; and
+- observed, interpolated, and extrapolated ordination states classified by a
+  geometric mixed hull/range test.
 
-The M2 metric values and intervals are deliberately marked as smoke-extraction
-summaries. M3 replaces them with the full tier-aware, resampling-based metric
-extractor. The desktop UI and runner do not exist yet.
+The desktop UI and runner do not exist yet. M4 adds the first bundle consumer.
 
 ## Repository map
 

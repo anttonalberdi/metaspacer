@@ -55,3 +55,17 @@ internal parameter representation.
 Bundle files are written atomically. CPU thread configuration is passed to TMB,
 while process affinity, hard memory limits, scheduling, and termination remain
 outside the pure package.
+
+## Metric extraction and tiers
+
+Measured metrics are computed from observed counts and their shared ordination,
+with uncertainty from within-group bootstrap resampling. Model-derived metrics
+and predicted states use asymptotic fixed-effect and loading draws plus the
+fitted latent distribution. The spec seed makes both paths reproducible without
+changing the caller's random-number stream.
+
+Condition tiers are geometric rather than model-dependent. Discrete focal
+variables define sampled strata; continuous variables are checked against an
+observed range, a two-dimensional convex hull, or standardized ranges in higher
+dimensions. Predicted states inside that domain are `interpolated`; states
+outside it are `extrapolated` and retain their distance-to-domain flag.

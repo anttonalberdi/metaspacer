@@ -12,9 +12,9 @@ feature-table order.
 - `data/` contains the referenced, SHA-256-pinned inputs.
 
 The committed bundle remains a deterministic contract fixture rather than a
-fitted scientific result. M2 smoke tests fit this dataset into a temporary
-output directory and validate the generated bundle without replacing the stable
-fixture.
+fitted scientific result. M3 smoke tests fit this dataset into a temporary
+output directory, extract tier-aware metrics and predictive clouds, and validate
+the generated bundle without replacing the stable fixture.
 
 Regenerate all files deterministically from the repository root:
 
@@ -22,9 +22,9 @@ Regenerate all files deterministically from the repository root:
 pnpm generate:fixtures
 ```
 
-Fit and validate it with the M2 backend after installing `rpkg/`:
+Fit and validate it with the M3 backend after installing `rpkg/`:
 
 ```sh
-Rscript scripts/smoke-r-backend.R out/m2-smoke
-pnpm validate:bundle out/m2-smoke/results-bundle.json
+Rscript scripts/smoke-r-backend.R out/m3-smoke
+pnpm validate:bundle out/m3-smoke/results-bundle.json
 ```

@@ -15,12 +15,27 @@
 - First engine: gllvm >= 2.0.0, probed with gllvm 2.0.2 on R 4.3.3.
 - Negative-binomial family maps to `negative.binomial`; ZINB maps to `ZINB`.
 - Library size is a log effort offset centered on median library size.
-- gllvm standard errors seed a diagonal sampling-covariance approximation in M2;
-  M3 adds resampling-based metric uncertainty.
+- gllvm standard errors seed a diagonal sampling-covariance approximation in M2.
 - `TMB::openmp()` applies `cpuThreads`; affinity and hard memory enforcement
   stay runner-owned.
 
-## Deferred until M3
+## M3 verified choices
 
-- Bootstrap versus sampling-around-the-estimate for metric intervals.
-- Full interpolated/extrapolated predictive clouds and geometric tier tests.
+- Measured metrics use 200 deterministic, within-group nonparametric bootstrap
+  draws. Model-derived metrics use 200 deterministic asymptotic draws from the
+  fitted fixed-effect covariance and delta-method latent-loading variances.
+- Simple fixed-effect fits use the covariance returned by `vcov.gllvm` after
+  reordering it to the bundle's coefficient-major layout. Derived coefficients
+  from fourth-corner or phylogenetic random effects use a documented diagonal
+  standard-error fallback when no exact mapping is available.
+- Predicted clouds evaluate `X · Beta + Eta · Lambda`, sample the fitted latent
+  distribution, and apply the shared projection.
+- The geometric `mixed_hull_range` test first matches categorical/binary strata,
+  then uses an observed interval for one continuous variable, a convex hull for
+  two, and standardized observed ranges for higher dimensions.
+- Variance partitioning reports fixed focal effects as actionable and latent
+  structure as structural, normalized to a two-component split.
+
+## Deferred until M4
+
+- Desktop rendering of density fields, coverage, and tier-tagged statistics.

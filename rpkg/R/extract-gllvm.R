@@ -100,12 +100,17 @@ extract_projection <- function(fit, translation) {
   }
   rotation <- component$rotation[, seq_len(2L), drop = FALSE]
   scores <- sweep(eta, 2L, component$center, "-") %*% rotation
+  observed_eta <- log(translation$prepared$y + 0.5) - translation$offset$values
+  observed_scores <- sweep(observed_eta, 2L, component$center, "-") %*% rotation
   colnames(scores) <- c("Space 1", "Space 2")
+  colnames(observed_scores) <- c("Space 1", "Space 2")
   list(
     eta = eta,
+    observed_eta = observed_eta,
     center = unname(component$center),
     rotation = unname(rotation),
-    scores = unname(scores)
+    scores = unname(scores),
+    observed_scores = unname(observed_scores)
   )
 }
 
@@ -132,187 +137,20 @@ reference_group <- function(translation) {
   list(column = categorical[[1L]]$name, reference = categorical[[1L]]$referenceLevel)
 }
 
-metric_dispersion <- function(scores, groups, reference) {
-  selected <- scores[groups == reference, , drop = FALSE]
-  center <- colMeans(selected)
-  distances <- sqrt(rowSums(sweep(selected, 2L, center, "-")^2))
-  c(value = mean(distances), se = stats::sd(distances) / sqrt(length(distances)))
-}
-
-metric_effective_dimensionality <- function(eta) {
-  eigenvalues <- pmax(eigen(stats::cov(eta), symmetric = TRUE, only.values = TRUE)$values, 0)
-  denominator <- sum(eigenvalues^2)
-  if (denominator == 0) 0 else sum(eigenvalues)^2 / denominator
-}
-
-metric_schoener <- function(y, groups, reference) {
-  alternatives <- setdiff(unique(groups), reference)
-  if (length(alternatives) == 0L) {
-    return(1)
-  }
-  normalize <- function(values) values / sum(values)
-  reference_composition <- normalize(colSums(y[groups == reference, , drop = FALSE]))
-  comparison <- normalize(colSums(y[groups == alternatives[[1L]], , drop = FALSE]))
-  1 - 0.5 * sum(abs(reference_composition - comparison))
-}
-
-metric_containment <- function(scores, groups, reference) {
-  reference_scores <- scores[groups == reference, , drop = FALSE]
-  comparison_scores <- scores[groups != reference, , drop = FALSE]
-  if (nrow(comparison_scores) == 0L) {
-    return(1)
-  }
-  covariance <- stats::cov(reference_scores) + diag(1e-8, ncol(reference_scores))
-  distances <- stats::mahalanobis(
-    comparison_scores,
-    center = colMeans(reference_scores),
-    cov = covariance
-  )
-  mean(distances <= stats::qchisq(0.95, df = ncol(reference_scores)))
-}
-
-metric_transition <- function(scores, groups, reference) {
-  alternatives <- setdiff(unique(groups), reference)
-  if (length(alternatives) == 0L) {
-    return(0)
-  }
-  start <- colMeans(scores[groups == reference, , drop = FALSE])
-  end <- colMeans(scores[groups == alternatives[[1L]], , drop = FALSE])
-  sqrt(sum((start - end)^2))
-}
-
-metric_variance_partition <- function(observed, fitted) {
-  total <- sum((observed - mean(observed))^2)
-  if (total == 0) {
-    return(0)
-  }
-  max(0, min(1, 1 - sum((observed - fitted)^2) / total))
-}
-
-metric_chao_coverage <- function(y) {
-  totals <- colSums(y)
-  abundance <- sum(totals)
-  if (abundance == 0) {
-    return(0)
-  }
-  singletons <- sum(totals == 1)
-  max(0, min(1, 1 - singletons / abundance))
-}
-
-make_smoke_metrics <- function(fit, translation, projection) {
-  group_info <- reference_group(translation)
+observed_groups <- function(translation, group_info = reference_group(translation)) {
   if (is.null(group_info$column)) {
-    groups <- rep(group_info$reference, nrow(projection$scores))
-  } else {
-    groups <- as.character(translation$prepared$samples[[group_info$column]])
+    return(rep(group_info$reference, nrow(translation$prepared$y)))
   }
-  dispersion <- metric_dispersion(projection$scores, groups, group_info$reference)
-  dimensionality <- metric_effective_dimensionality(projection$eta)
-  schoener <- metric_schoener(translation$prepared$y, groups, group_info$reference)
-  containment <- metric_containment(projection$scores, groups, group_info$reference)
-  transition <- metric_transition(projection$scores, groups, group_info$reference)
-  plasticity <- if (dispersion[["value"]] == 0) 0 else transition / dispersion[["value"]]
-  fitted <- as.matrix(stats::predict(fit, type = "response"))
-  variance <- metric_variance_partition(translation$prepared$y, fitted)
-  coverage <- metric_chao_coverage(translation$prepared$y)
-  note <- paste(
-    "M2 smoke-extraction interval; resampling-based metric uncertainty is added in M3."
-  )
-  make_metric <- function(id, label, value, se, unit, scope, bounds = c(-Inf, Inf)) {
-    list(
-      id = id,
-      label = label,
-      tier = "measured",
-      estimate = empirical_estimate(value, se, bounds),
-      unit = unit,
-      scope = scope,
-      note = note
-    )
-  }
-
-  list(
-    make_metric(
-      "dispersion",
-      paste0(group_info$reference, " oscillation"),
-      dispersion[["value"]],
-      dispersion[["se"]],
-      "ordination_sd",
-      list(group = group_info$reference),
-      c(0, Inf)
-    ),
-    make_metric(
-      "effective_dimensionality",
-      "Effective dimensionality",
-      dimensionality,
-      0,
-      "dimensions",
-      list(dataset = "all"),
-      c(0, Inf)
-    ),
-    make_metric(
-      "schoener_d",
-      "Schoener's D overlap",
-      schoener,
-      0,
-      "proportion",
-      list(referenceGroup = group_info$reference),
-      c(0, 1)
-    ),
-    make_metric(
-      "containment",
-      "Reference-space containment",
-      containment,
-      0,
-      "proportion",
-      list(referenceGroup = group_info$reference),
-      c(0, 1)
-    ),
-    make_metric(
-      "transition_distance",
-      "Transition distance",
-      transition,
-      0,
-      "ordination_distance",
-      list(referenceGroup = group_info$reference),
-      c(0, Inf)
-    ),
-    make_metric(
-      "plasticity",
-      "Relative plasticity",
-      plasticity,
-      0,
-      "relative_distance",
-      list(referenceGroup = group_info$reference),
-      c(0, Inf)
-    ),
-    make_metric(
-      "variance_partition",
-      "Modelled variance fraction",
-      variance,
-      0,
-      "proportion",
-      list(component = "modelled"),
-      c(0, 1)
-    ),
-    make_metric(
-      "chao_coverage",
-      "Chao sample coverage",
-      coverage,
-      0,
-      "proportion",
-      list(dataset = "all"),
-      c(0, 1)
-    )
-  )
+  as.character(translation$prepared$samples[[group_info$column]])
 }
 
 make_observed_states <- function(translation, projection) {
   focal_entries <- translation$spec$roles$samples$focalVariables
   group_info <- reference_group(translation)
-  axis_standard_errors <- apply(projection$scores, 2L, stats::sd) /
-    sqrt(nrow(projection$scores))
+  axis_standard_errors <- apply(projection$observed_scores, 2L, stats::sd) /
+    sqrt(nrow(projection$observed_scores))
 
-  lapply(seq_len(nrow(projection$scores)), function(index) {
+  lapply(seq_len(nrow(projection$observed_scores)), function(index) {
     condition <- list()
     for (entry in focal_entries) {
       condition[[entry$column]] <- scalar_json_value(
@@ -328,7 +166,7 @@ make_observed_states <- function(translation, projection) {
       list(
         axis = paste("Space", axis),
         estimate = empirical_estimate(
-          projection$scores[index, axis],
+          projection$observed_scores[index, axis],
           axis_standard_errors[[axis]]
         )
       )
@@ -350,7 +188,67 @@ make_observed_states <- function(translation, projection) {
   })
 }
 
-extract_uncertainty <- function(fit, beta, loadings) {
+fallback_variance <- function(fit) {
+  standard_errors <- unlist(fit$sd, recursive = TRUE, use.names = FALSE)
+  standard_errors <- standard_errors[is.finite(standard_errors) & standard_errors > 0]
+  if (length(standard_errors) == 0L) {
+    return(.Machine$double.eps)
+  }
+  unname(stats::median(standard_errors)^2)
+}
+
+extract_fixed_covariance <- function(fit, beta) {
+  parameter_count <- length(beta)
+  fallback <- diag(fallback_variance(fit), parameter_count)
+  covariance <- tryCatch(as.matrix(stats::vcov(fit)), error = function(error) NULL)
+  if (is.null(covariance)) {
+    return(list(values = fallback, warning = paste(
+      "The fitted Hessian covariance was unavailable; fixed-effect draws use a",
+      "diagonal standard-error fallback."
+    )))
+  }
+  fixed_indices <- which(rownames(covariance) == "b")
+  if (length(fixed_indices) != parameter_count) {
+    return(list(values = fallback, warning = paste(
+      "The fitted Hessian could not be mapped to projected coefficients;",
+      "fixed-effect draws use a diagonal standard-error fallback."
+    )))
+  }
+  response_major <- covariance[fixed_indices, fixed_indices, drop = FALSE]
+  raw_indices <- matrix(seq_len(parameter_count), nrow = nrow(beta))
+  coefficient_major <- as.vector(t(raw_indices))
+  values <- response_major[coefficient_major, coefficient_major, drop = FALSE]
+  values[!is.finite(values)] <- 0
+  diagonal <- diag(values)
+  diag(values) <- ifelse(diagonal > 0, diagonal, fallback_variance(fit))
+  list(values = (values + t(values)) / 2, warning = NULL)
+}
+
+extract_loading_variances <- function(fit, loadings) {
+  if (length(loadings) == 0L) {
+    return(numeric())
+  }
+  fallback <- fallback_variance(fit)
+  if (is.null(fit$sd$theta)) {
+    return(rep(fallback, length(loadings)))
+  }
+  theta <- as.matrix(fit$params$theta)[, seq_len(nrow(loadings)), drop = FALSE]
+  theta_sd <- as.matrix(fit$sd$theta)[, seq_len(nrow(loadings)), drop = FALSE]
+  sigma <- rep(fit$params$sigma.lv, length.out = nrow(loadings))
+  sigma_sd <- if (is.null(fit$sd$sigma.lv)) {
+    rep(0, nrow(loadings))
+  } else {
+    rep(fit$sd$sigma.lv, length.out = nrow(loadings))
+  }
+  sigma_sd[!is.finite(sigma_sd)] <- 0
+  variances <- sweep(theta_sd^2, 2L, sigma^2, "*") +
+    sweep(theta^2, 2L, sigma_sd^2, "*")
+  variances <- t(variances)
+  variances[!is.finite(variances) | variances <= 0] <- fallback
+  as.vector(t(variances))
+}
+
+extract_uncertainty <- function(beta, loadings, beta_covariance, loading_variances) {
   parameter_order <- c(
     unlist(lapply(seq_len(nrow(beta)), function(row) {
       paste0("Beta[", rownames(beta)[[row]], ",", colnames(beta), "]")
@@ -359,19 +257,13 @@ extract_uncertainty <- function(fit, beta, loadings) {
       paste0("Lambda[LV", row, ",", colnames(loadings), "]")
     }))
   )
-  standard_errors <- unlist(fit$sd, recursive = TRUE, use.names = FALSE)
-  standard_errors <- standard_errors[is.finite(standard_errors) & standard_errors > 0]
-  fallback_variance <- if (length(standard_errors) == 0L) {
-    .Machine$double.eps
-  } else {
-    stats::median(standard_errors)^2
-  }
+  diagonal <- c(diag(beta_covariance), loading_variances)
   list(
     kind = "sampling_covariance",
     parameterOrder = as.list(parameter_order),
     covariance = list(
       representation = "diagonal",
-      diagonal = as.list(rep(unname(fallback_variance), length(parameter_order)))
+      diagonal = as.list(unname(diagonal))
     )
   )
 }
@@ -393,24 +285,46 @@ extract_family <- function(fit, spec) {
 }
 
 engine_extract.metaspacer_engine_gllvm <- function(engine, fit, translation, context) {
+  draw_count <- 200L
   beta <- extract_beta(fit, translation)
   latent <- extract_latent_components(fit, translation)
   projection <- extract_projection(fit, translation)
+  fixed_covariance <- extract_fixed_covariance(fit, beta)
+  loading_variances <- extract_loading_variances(fit, latent$loadings)
+  resampled <- with_resample_seed(translation$spec$seed, {
+    predictive <- make_predictive_cloud(
+      translation, beta, fixed_covariance$values, latent, loading_variances,
+      projection, draw_count
+    )
+    list(
+      predictive = predictive,
+      metrics = make_tier_metrics(
+        translation, beta, latent, projection, predictive, draw_count
+      )
+    )
+  })
   response_features <- colnames(translation$prepared$y)
   warnings <- unique(c(
     translation$warnings,
     attr(fit, "metaspacer_warnings"),
-    "M2 uses a diagonal sampling-covariance approximation; M3 adds resampled intervals."
+    fixed_covariance$warning,
+    paste0(
+      "Intervals use ", draw_count,
+      " deterministic bootstrap or asymptotic sampling draws."
+    )
   ))
 
   list(
     bundleVersion = "1.0.0",
     specVersion = translation$spec$specVersion,
     precomputed = list(
-      metrics = make_smoke_metrics(fit, translation, projection),
+      metrics = resampled$metrics,
       ordination = list(
         axisLabels = list("Space 1", "Space 2"),
-        states = make_observed_states(translation, projection)
+        states = c(
+          make_observed_states(translation, projection),
+          resampled$predictive$states
+        )
       )
     ),
     fittedParameters = list(
@@ -445,7 +359,9 @@ engine_extract.metaspacer_engine_gllvm <- function(engine, fit, translation, con
         rotation = projection$rotation
       ),
       family = extract_family(fit, translation$spec),
-      uncertainty = extract_uncertainty(fit, beta, latent$loadings)
+      uncertainty = extract_uncertainty(
+        beta, latent$loadings, fixed_covariance$values, loading_variances
+      )
     ),
     provenance = list(
       specSha256 = context$spec_hash,

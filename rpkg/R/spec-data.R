@@ -27,7 +27,7 @@ validate_spec_document <- function(spec) {
     add_error("unsupported_spec_version", "/specVersion", "Expected specVersion 1.0.0.")
   }
   if (!identical(spec$engine, "gllvm")) {
-    add_error("unsupported_engine", "/engine", "M2 supports the gllvm engine only.")
+    add_error("unsupported_engine", "/engine", "The current package supports gllvm only.")
   }
   if (is.null(spec$data) || is.null(spec$roles) || is.null(spec$model)) {
     add_error(
@@ -72,7 +72,7 @@ read_table_reference <- function(reference, path) {
   format <- reference$format
   if (!format %in% c("csv", "tsv")) {
     abort_metaspacer(
-      paste0("M2 supports CSV and TSV tables; received ", format, "."),
+      paste0("The current package supports CSV and TSV tables; received ", format, "."),
       "metaspacer_input_error"
     )
   }

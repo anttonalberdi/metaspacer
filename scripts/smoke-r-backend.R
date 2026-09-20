@@ -1,5 +1,5 @@
 args <- commandArgs(trailingOnly = TRUE)
-out_path <- if (length(args) >= 1L) args[[1L]] else tempfile("metaspacer-m2-smoke-")
+out_path <- if (length(args) >= 1L) args[[1L]] else tempfile("metaspacer-m3-smoke-")
 
 bundle_path <- metaspacer::run_spec(
   spec_path = "examples/model-spec.json",
