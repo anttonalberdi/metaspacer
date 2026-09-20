@@ -7,8 +7,8 @@ uncertainty to every reported metric and prediction.
 
 ## Project status
 
-Development has completed **M3 — tier-tagged metric extractor**. The repository
-currently contains:
+Development has completed **M4 — minimal consumer**. The repository currently
+contains:
 
 - versioned JSON Schemas for model specifications and results bundles;
 - generated TypeScript types derived from those schemas;
@@ -25,9 +25,13 @@ currently contains:
 - asymptotic sampling intervals for transition, plasticity, and the actionable
   vs structural variance split; and
 - observed, interpolated, and extrapolated ordination states classified by a
-  geometric mixed hull/range test.
+  geometric mixed hull/range test; and
+- an Electron + React bundle consumer with native JSON loading, runtime schema
+  validation, a density-and-samples space view, coverage intervals, and a
+  tier-filterable statistics table.
 
-The desktop UI and runner do not exist yet. M4 adds the first bundle consumer.
+The design builder and runner do not exist yet. M5 adds the design builder and
+its validate-and-estimate gate.
 
 ## Repository map
 
@@ -51,8 +55,21 @@ in `rpkg/DESCRIPTION`.
 pnpm install --frozen-lockfile
 pnpm generate
 pnpm check
+pnpm build:app
 R CMD check rpkg --no-manual
 ```
+
+Run the consumer in a browser during development, or build and open it in
+Electron:
+
+```sh
+pnpm dev:app
+pnpm --filter @metaspacer/app start
+```
+
+The empty state accepts a results-bundle JSON file via the native picker or
+drag-and-drop. It also links to the deterministic golden bundle for a quick
+tour.
 
 `pnpm generate` is deterministic. It regenerates the golden CSV/Newick files,
 updates their SHA-256 hashes in the example spec and provenance, and regenerates

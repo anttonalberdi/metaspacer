@@ -9,10 +9,10 @@ design builder -> model spec -> R package -> results bundle -> consumer
                                   runner
 ```
 
-The design builder and consumer will live in `app/`. The pure R package will
-live in `rpkg/`. Local and exported execution will share one headless R entry
-point; process lifecycle belongs to `runner/` and the Electron main process,
-never to the R package.
+The consumer lives in `app/`; the M5 design builder will join it there. The pure
+R package lives in `rpkg/`. Local and exported execution will share one headless
+R entry point; process lifecycle belongs to `runner/` and the Electron main
+process, never to the R package.
 
 ## Invariants
 
@@ -69,3 +69,13 @@ variables define sampled strata; continuous variables are checked against an
 observed range, a two-dimensional convex hull, or standardized ranges in higher
 dimensions. Predicted states inside that domain are `interpolated`; states
 outside it are `extrapolated` and retain their distance-to-domain flag.
+
+## Consumer boundary
+
+The renderer receives bundle text from either a sandboxed Electron preload
+bridge or a browser file input. It validates the document against the results
+bundle schema before rendering and keeps filesystem access out of the renderer.
+The density field uses predicted ordination states; measured samples are drawn
+as solid points, interpolation as outlined diamonds, and extrapolation as
+crosses. Coverage and statistics use only precomputed metrics from the bundle,
+so the M4 consumer performs no model fitting or metric recomputation.

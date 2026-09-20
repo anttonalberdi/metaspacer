@@ -36,6 +36,16 @@
 - Variance partitioning reports fixed focal effects as actionable and latent
   structure as structural, normalized to a two-component split.
 
-## Deferred until M4
+## M4 verified choices
 
-- Desktop rendering of density fields, coverage, and tier-tagged statistics.
+- The consumer is a Vite-built React renderer hosted by a security-hardened
+  Electron window (`contextIsolation`, sandbox, and no Node integration).
+- Bundle loading crosses a narrow preload bridge that returns file text; the
+  renderer validates it against the versioned JSON Schema before use.
+- The space view uses a lightweight canvas density layer plus an accessible SVG
+  point layer. It does not add a charting dependency.
+- Predicted states drive density fields, while marks distinguish measured,
+  interpolated, and extrapolated states. The same tiers remain explicit in the
+  statistics table.
+- The golden contract fixture is available from the empty state for a
+  deterministic, no-fit demonstration.
