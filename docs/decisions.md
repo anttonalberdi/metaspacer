@@ -49,3 +49,19 @@
   statistics table.
 - The golden contract fixture is available from the empty state for a
   deterministic, no-fit demonstration.
+
+## M5 verified choices
+
+- Builder inputs remain role-specific: count table, sample metadata, feature
+  metadata, and an optional Newick tree. CSV and TSV are supported by the
+  current R backend; Parquet remains contract-reserved.
+- The renderer derives column suggestions and validates the emitted spec against
+  JSON Schema, while scientific validation remains package-owned.
+- Electron stages exact input bytes in a temporary directory and invokes the
+  internal package preflight. The preflight reuses document loading,
+  hash-checking, engine validation, and `estimate_cost()` without fitting.
+- Emitted specs use stable portable paths under `data/`. M6 will package those
+  inputs for local or exported jobs; M5 requires the explicit route decision but
+  does not execute it.
+- The gate stays unavailable in a plain browser because substituting a partial
+  TypeScript reimplementation would let package and builder validation drift.

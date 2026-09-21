@@ -1,9 +1,25 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
-import { readFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { execFile } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { dirname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
+const runFile = promisify(execFile);
+
+interface PreflightPayload {
+  spec: unknown;
+  files: Array<{ path: string; contentBase64: string }>;
+}
+
+const preflightExpression = `
+args <- commandArgs(trailingOnly = TRUE)
+result <- metaspacer:::preflight_spec(args[[1]], args[[2]])
+jsonlite::write_json(result, stdout(), auto_unbox = TRUE, null = "null")
+`;
 
 function createWindow(): void {
   const window = new BrowserWindow({
@@ -46,6 +62,83 @@ ipcMain.handle('bundle:open', async () => {
     path,
     content: await readFile(path, 'utf8'),
   };
+});
+
+ipcMain.handle('builder:open-input', async (_event, kind: string) => {
+  const isTree = kind === 'phylogeneticTree';
+  const selection = await dialog.showOpenDialog({
+    title: isTree
+      ? 'Select a Newick phylogenetic tree'
+      : 'Select an input table',
+    buttonLabel: 'Use input',
+    properties: ['openFile'],
+    filters: isTree
+      ? [{ name: 'Newick trees', extensions: ['nwk', 'newick', 'tree'] }]
+      : [{ name: 'Delimited tables', extensions: ['csv', 'tsv'] }],
+  });
+  if (selection.canceled || selection.filePaths.length === 0) return null;
+
+  const path = selection.filePaths[0];
+  const content = await readFile(path);
+  return {
+    name: path.split(/[/\\]/).at(-1) ?? path,
+    contentBase64: content.toString('base64'),
+    sha256: createHash('sha256').update(content).digest('hex'),
+    size: content.byteLength,
+  };
+});
+
+ipcMain.handle(
+  'builder:preflight',
+  async (_event, payload: PreflightPayload) => {
+    const stagingDirectory = await mkdtemp(
+      join(tmpdir(), 'metaspacer-preflight-'),
+    );
+    try {
+      for (const file of payload.files) {
+        const normalized = normalize(file.path);
+        const destination = resolve(stagingDirectory, normalized);
+        if (
+          normalized.startsWith('..') ||
+          (!destination.startsWith(`${stagingDirectory}${sep}`) &&
+            destination !== stagingDirectory)
+        ) {
+          throw new Error(
+            'Preflight input paths must stay within the staging directory.',
+          );
+        }
+        await mkdir(dirname(destination), { recursive: true });
+        await writeFile(destination, Buffer.from(file.contentBase64, 'base64'));
+      }
+
+      const specPath = join(stagingDirectory, 'model-spec.json');
+      await writeFile(
+        specPath,
+        `${JSON.stringify(payload.spec, null, 2)}\n`,
+        'utf8',
+      );
+      const { stdout } = await runFile(
+        'Rscript',
+        ['--vanilla', '-e', preflightExpression, specPath, stagingDirectory],
+        { timeout: 30_000, maxBuffer: 2 * 1024 * 1024 },
+      );
+      return JSON.parse(stdout) as unknown;
+    } finally {
+      await rm(stagingDirectory, { recursive: true, force: true });
+    }
+  },
+);
+
+ipcMain.handle('builder:save-spec', async (_event, content: string) => {
+  const selection = await dialog.showSaveDialog({
+    title: 'Save metaspacer model spec',
+    buttonLabel: 'Save model spec',
+    defaultPath: 'model-spec.json',
+    filters: [{ name: 'JSON model specs', extensions: ['json'] }],
+  });
+  if (selection.canceled || !selection.filePath) return null;
+  await writeFile(selection.filePath, content, 'utf8');
+  return selection.filePath;
 });
 
 app.whenReady().then(() => {

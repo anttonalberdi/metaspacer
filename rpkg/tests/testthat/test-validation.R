@@ -37,3 +37,33 @@ test_that("cost estimation is cheap and dimension-aware", {
   expect_gte(estimate$estimatedMemoryMB, 1)
   expect_gte(estimate$estimatedRuntimeSeconds$upper, estimate$estimatedRuntimeSeconds$lower)
 })
+
+test_that("builder preflight composes package validation and cost estimation", {
+  directory <- withr::local_tempdir()
+  fixture <- make_test_fixture(directory)
+
+  result <- metaspacer:::preflight_spec(fixture$spec_path, directory)
+
+  expect_true(result$validation$valid)
+  expect_empty(result$validation$errors)
+  expect_identical(result$cost$samples, 24L)
+  expect_identical(result$cost$responses, 6L)
+
+  fixture$spec$roles$samples$sampleIdColumn <- "unknown_id"
+  jsonlite::write_json(
+    fixture$spec,
+    fixture$spec_path,
+    auto_unbox = TRUE,
+    pretty = TRUE,
+    null = "null"
+  )
+  invalid <- metaspacer:::preflight_spec(fixture$spec_path, directory)
+
+  expect_false(invalid$validation$valid)
+  expect_null(invalid$cost)
+  expect_true(any(vapply(
+    invalid$validation$errors,
+    function(issue) identical(issue$code, "missing_sample_id_column"),
+    logical(1)
+  )))
+})

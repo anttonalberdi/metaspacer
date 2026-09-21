@@ -7,7 +7,7 @@ uncertainty to every reported metric and prediction.
 
 ## Project status
 
-Development has completed **M4 — minimal consumer**. The repository currently
+Development has completed **M5 — design builder**. The repository currently
 contains:
 
 - versioned JSON Schemas for model specifications and results bundles;
@@ -28,10 +28,13 @@ contains:
   geometric mixed hull/range test; and
 - an Electron + React bundle consumer with native JSON loading, runtime schema
   validation, a density-and-samples space view, coverage intervals, and a
-  tier-filterable statistics table.
+  tier-filterable statistics table; and
+- a four-input design builder with column-role mapping, live package-backed
+  validation, cost estimation, an explicit local-or-export gate, and model-spec
+  emission.
 
-The design builder and runner do not exist yet. M5 adds the design builder and
-its validate-and-estimate gate.
+The runner does not exist yet. M6 will execute a validated spec locally or
+package the same spec and inputs for remote execution.
 
 ## Repository map
 
@@ -67,9 +70,11 @@ pnpm dev:app
 pnpm --filter @metaspacer/app start
 ```
 
-The empty state accepts a results-bundle JSON file via the native picker or
-drag-and-drop. It also links to the deterministic golden bundle for a quick
-tour.
+The empty state opens either the model-design workflow or a results-bundle JSON
+file. The builder accepts CSV/TSV count, sample, and feature tables plus an
+optional Newick tree. In Electron, every complete edit is checked by the R
+package before the local-or-export decision is enabled. The golden bundle
+remains available for a deterministic consumer tour.
 
 `pnpm generate` is deterministic. It regenerates the golden CSV/Newick files,
 updates their SHA-256 hashes in the example spec and provenance, and regenerates

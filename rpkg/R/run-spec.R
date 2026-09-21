@@ -62,6 +62,30 @@ write_bundle_atomic <- function(bundle, output_file, overwrite) {
   normalizePath(output_file)
 }
 
+preflight_spec <- function(spec_path, data_dir = dirname(spec_path)) {
+  spec <- read_model_spec(spec_path)
+  document_validation <- validate_spec_document(spec)
+  if (!document_validation$valid) {
+    return(list(validation = unclass(document_validation), cost = NULL))
+  }
+
+  loaded <- load_spec_data(spec, data_dir)
+  if (!loaded$validation$valid) {
+    return(list(validation = unclass(loaded$validation), cost = NULL))
+  }
+
+  engine <- new_engine(spec$engine)
+  engine_validation <- engine_validate(engine, spec, loaded$data)
+  list(
+    validation = unclass(engine_validation),
+    cost = if (engine_validation$valid) {
+      engine_estimate_cost(engine, spec, loaded$data)
+    } else {
+      NULL
+    }
+  )
+}
+
 #' Run a metaspacer model specification
 #'
 #' @param spec_path Path to a model-spec JSON document.

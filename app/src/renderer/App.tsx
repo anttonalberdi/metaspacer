@@ -8,6 +8,7 @@ import {
   tierCounts,
 } from './bundle';
 import { CoveragePanel } from './components/CoveragePanel';
+import { DesignBuilder } from './components/DesignBuilder';
 import { SpacePlot } from './components/SpacePlot';
 import { StatsTable } from './components/StatsTable';
 import { TierGuide } from './components/TierGuide';
@@ -19,6 +20,7 @@ interface LoadedBundle {
 
 export function App() {
   const [loaded, setLoaded] = useState<LoadedBundle | null>(null);
+  const [showBuilder, setShowBuilder] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -89,6 +91,10 @@ export function App() {
     />
   );
 
+  if (showBuilder) {
+    return <DesignBuilder onClose={() => setShowBuilder(false)} />;
+  }
+
   if (!loaded) {
     return (
       <main
@@ -108,31 +114,44 @@ export function App() {
           <p className="brand">
             <span>meta</span>spacer
           </p>
-          <div className="milestone-label">M4 · Bundle consumer</div>
+          <div className="milestone-label">M5 · Design builder + consumer</div>
           <h1 id="welcome-title">
-            See the space.
+            Design the space.
             <br />
-            Keep the evidence visible.
+            Keep evidence visible.
           </h1>
           <p className="welcome-intro">
-            Open a metaspacer results bundle to explore community states,
-            sampling coverage, and uncertainty without blurring observations and
-            model predictions.
+            Map microbiome inputs into a validated model recipe, estimate its
+            compute cost, or open a finished bundle without blurring
+            observations and predictions.
           </p>
           <div className="welcome-actions">
             <button
               className="primary-button"
               type="button"
-              onClick={() => void openBundle()}
+              onClick={() => setShowBuilder(true)}
             >
-              <span>Open results bundle</span>
+              <span>Design a model</span>
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M5 12h14M13 6l6 6-6 6" />
               </svg>
             </button>
-            <button className="text-button" type="button" onClick={showExample}>
-              Explore the golden example
-            </button>
+            <div className="welcome-secondary-actions">
+              <button
+                className="text-button"
+                type="button"
+                onClick={() => void openBundle()}
+              >
+                Open results bundle
+              </button>
+              <button
+                className="quiet-button"
+                type="button"
+                onClick={showExample}
+              >
+                Golden example
+              </button>
+            </div>
           </div>
           {error ? (
             <p className="error-message" role="alert">
@@ -140,7 +159,7 @@ export function App() {
             </p>
           ) : null}
           <p className="drop-hint">
-            or drop a v1.0.0 bundle anywhere in this window
+            or drop a v1.0.0 results bundle anywhere in this window
           </p>
         </section>
         <aside className="welcome-tiers" aria-label="Confidence tiers">

@@ -9,10 +9,10 @@ design builder -> model spec -> R package -> results bundle -> consumer
                                   runner
 ```
 
-The consumer lives in `app/`; the M5 design builder will join it there. The pure
-R package lives in `rpkg/`. Local and exported execution will share one headless
-R entry point; process lifecycle belongs to `runner/` and the Electron main
-process, never to the R package.
+The design builder and consumer live in `app/`. The pure R package lives in
+`rpkg/`. Local and exported execution will share one headless R entry point;
+process lifecycle belongs to `runner/` and the Electron main process, never to
+the R package.
 
 ## Invariants
 
@@ -79,3 +79,20 @@ The density field uses predicted ordination states; measured samples are drawn
 as solid points, interpolation as outlined diamonds, and extrapolation as
 crosses. Coverage and statistics use only precomputed metrics from the bundle,
 so the M4 consumer performs no model fitting or metric recomputation.
+
+## Design-builder boundary
+
+The renderer reads dropped CSV/TSV tables and an optional Newick tree only to
+discover columns and propose reversible role defaults. It produces a model spec
+directly from the versioned schema and hashes the exact input bytes.
+Browser-side schema validation catches incomplete drafts, but it is not accepted
+as a scientific preflight.
+
+For a complete draft, the sandboxed preload bridge sends the spec and input
+bytes to Electron's main process. Main writes them to a short-lived staging
+directory and invokes the package's internal `preflight_spec()` function. That
+function composes the same document, hash, data, and engine validation used by
+`run_spec()` and only estimates cost after validation succeeds. Staging is
+removed after each check; no fitting occurs. The gate then requires an explicit
+local-or-export choice before saving the spec. M6 owns both execution routes and
+portable input packaging.
