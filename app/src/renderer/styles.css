@@ -1635,6 +1635,120 @@ td > small {
   text-align: right;
 }
 
+.runner-error {
+  margin: 13px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid #a34030;
+  color: #7f2f24;
+  background: #fae5df;
+  font-size: 10px;
+  white-space: pre-wrap;
+}
+
+.runner-result,
+.job-monitor {
+  margin-top: 14px;
+  border: 1px solid #d9ded8;
+  border-radius: 6px;
+  background: white;
+}
+
+.runner-result {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 16px 18px;
+}
+
+.runner-result strong {
+  font-size: 12px;
+}
+
+.runner-result p,
+.runner-result small {
+  display: block;
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 9px;
+  overflow-wrap: anywhere;
+}
+
+.job-monitor {
+  padding: 17px 18px;
+}
+
+.job-monitor.job-completed {
+  border-color: #9fc8be;
+}
+
+.job-monitor.job-failed {
+  border-color: #d8afa6;
+}
+
+.job-monitor-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.job-monitor-heading > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.job-monitor-heading span {
+  color: var(--teal);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.job-monitor-heading strong {
+  font-size: 13px;
+}
+
+.job-monitor dl {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 15px 0 0;
+  border-block: 1px solid #e2e5e0;
+}
+
+.job-monitor dl div {
+  padding: 11px 12px 11px 0;
+}
+
+.job-monitor dt {
+  color: var(--muted);
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.job-monitor dd {
+  margin: 4px 0 0;
+  font-family: Georgia, serif;
+  font-size: 15px;
+}
+
+.job-monitor > p,
+.job-monitor > small {
+  display: block;
+  margin: 11px 0 0;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.job-monitor > p.memory-warning {
+  color: #93422d;
+}
+
 @media (max-width: 1120px) {
   .welcome {
     grid-template-columns: 70px minmax(490px, 1fr) 230px;

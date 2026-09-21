@@ -60,8 +60,25 @@
 - Electron stages exact input bytes in a temporary directory and invokes the
   internal package preflight. The preflight reuses document loading,
   hash-checking, engine validation, and `estimate_cost()` without fitting.
-- Emitted specs use stable portable paths under `data/`. M6 will package those
-  inputs for local or exported jobs; M5 requires the explicit route decision but
-  does not execute it.
+- Emitted specs use stable portable paths under `data/`. M5 requires the
+  explicit route decision but does not itself execute it.
 - The gate stays unavailable in a plain browser because substituting a partial
   TypeScript reimplementation would let package and builder validation drift.
+
+## M6 verified choices
+
+- The Electron main process owns a singleton job manager. Its global CPU budget
+  defaults to Node's available parallelism and can be constrained with
+  `METASPACER_CPU_BUDGET`; requested threads are reserved before a queued job
+  starts.
+- `OMP_NUM_THREADS`, OpenMP/BLAS companion variables, and optional affinity are
+  derived from the model spec. Affinity is expressed through
+  `GOMP_CPU_AFFINITY`, `OMP_PLACES`, and `OMP_PROC_BIND` without adding a shell
+  execution path.
+- `pidusage` supplies live process CPU and RSS. The soft memory limit warns; the
+  optional hard limit terminates through monitoring. This is deliberately
+  distinct from the cgroup/Job Object hard caps deferred by the brief.
+- Local and exported jobs use the same minimal `run-spec.R` launcher and public
+  `metaspacer::run_spec()` call. Export produces a directory containing exact
+  inputs, hashes, launchers, package source, and a `renv.lock` snapshot rather
+  than generating engine-specific code.

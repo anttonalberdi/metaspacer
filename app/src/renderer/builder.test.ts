@@ -76,4 +76,28 @@ describe('design-builder model spec', () => {
     expect(spec.model.offset.librarySize).toBe(true);
     expect(spec.engine).toBe('gllvm');
   });
+
+  it('includes optional runner affinity and monitored hard memory limits', () => {
+    const files = {
+      countTable: table('counts.csv', 'sample_id,F1\nS1,2\nS2,3\n'),
+      sampleMetadata: table(
+        'samples.csv',
+        'sample_id,group\nS1,Wild\nS2,Zoo\n',
+      ),
+      featureMetadata: table(
+        'features.csv',
+        'feature_id,phylum,completeness_pct,contamination_pct,genome_size_bp\nF1,Firmicutes,98,1,2000\n',
+      ),
+    };
+    const draft = {
+      ...initialDraft(files),
+      cpuAffinity: [2, 3],
+      memoryHardLimitMB: 6144,
+    };
+    const spec = buildModelSpec(draft, files);
+
+    expect(schemaErrors(spec)).toEqual([]);
+    expect(spec.resources.cpuAffinity).toEqual([2, 3]);
+    expect(spec.resources.memoryHardLimitMB).toBe(6144);
+  });
 });

@@ -114,16 +114,16 @@ export function App() {
           <p className="brand">
             <span>meta</span>spacer
           </p>
-          <div className="milestone-label">M5 · Design builder + consumer</div>
+          <div className="milestone-label">M6 · Runner + design + consumer</div>
           <h1 id="welcome-title">
             Design the space.
             <br />
             Keep evidence visible.
           </h1>
           <p className="welcome-intro">
-            Map microbiome inputs into a validated model recipe, estimate its
-            compute cost, or open a finished bundle without blurring
-            observations and predictions.
+            Map microbiome inputs into a validated model recipe, run it with
+            live resource telemetry, export it for remote compute, or inspect a
+            finished bundle.
           </p>
           <div className="welcome-actions">
             <button

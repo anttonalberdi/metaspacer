@@ -67,3 +67,19 @@ test_that("builder preflight composes package validation and cost estimation", {
     logical(1)
   )))
 })
+
+test_that("document validation checks runner memory guardrails", {
+  directory <- withr::local_tempdir()
+  fixture <- make_test_fixture(directory)
+  fixture$spec$resources$memorySoftLimitMB <- 1024
+  fixture$spec$resources$memoryHardLimitMB <- 512
+
+  result <- metaspacer:::validate_spec_document(fixture$spec)
+
+  expect_false(result$valid)
+  expect_true(any(vapply(
+    result$errors,
+    function(issue) identical(issue$code, "invalid_memory_hard_limit"),
+    logical(1)
+  )))
+})

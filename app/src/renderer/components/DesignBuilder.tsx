@@ -74,6 +74,20 @@ function numberValue(
   return Number.isFinite(value) ? value : fallback;
 }
 
+function affinityValue(value: string): number[] {
+  if (!value.trim()) return [];
+  return [
+    ...new Set(
+      value
+        .split(',')
+        .map((entry) => entry.trim())
+        .filter(Boolean)
+        .map(Number)
+        .filter((entry) => Number.isInteger(entry) && entry >= 0),
+    ),
+  ];
+}
+
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -263,6 +277,38 @@ export function DesignBuilder({ onClose }: { onClose: () => void }) {
   });
   const [route, setRoute] = useState<RunRoute | null>(null);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [job, setJob] = useState<JobSnapshot | null>(null);
+  const [exportedJob, setExportedJob] = useState<ExportedJob | null>(null);
+  const [runnerError, setRunnerError] = useState<string | null>(null);
+  const [runnerBusy, setRunnerBusy] = useState(false);
+  const [cpuAffinityText, setCpuAffinityText] = useState('');
+  const activeJobId = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!window.metaspacer) return;
+    let mounted = true;
+    void window.metaspacer
+      .listJobs()
+      .then((jobs) => {
+        const active = jobs
+          .filter((candidate) =>
+            ['queued', 'running'].includes(candidate.status),
+          )
+          .at(-1);
+        if (mounted && active) {
+          activeJobId.current = active.id;
+          setJob(active);
+        }
+      })
+      .catch(() => undefined);
+    const unsubscribe = window.metaspacer.onJobUpdate((update) => {
+      if (update.id === activeJobId.current) setJob(update);
+    });
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
+  }, []);
 
   const useFile = async (
     role: InputRole,
@@ -277,6 +323,7 @@ export function DesignBuilder({ onClose }: { onClose: () => void }) {
       setFiles((current) => {
         const next = { ...current, [role]: inspected };
         setDraft(initialDraft(next));
+        setCpuAffinityText('');
         return next;
       });
     } catch {
@@ -292,6 +339,7 @@ export function DesignBuilder({ onClose }: { onClose: () => void }) {
       const next = { ...current };
       delete next[role];
       setDraft(initialDraft(next));
+      setCpuAffinityText('');
       return next;
     });
   };
@@ -421,6 +469,39 @@ export function DesignBuilder({ onClose }: { onClose: () => void }) {
     setSaveMessage('Downloaded model-spec.json');
   };
 
+  const executeRoute = async () => {
+    if (!spec || !route || !window.metaspacer) return;
+    setRunnerBusy(true);
+    setRunnerError(null);
+    setExportedJob(null);
+    try {
+      const payload = preflightPayload(spec, files);
+      if (route === 'local') {
+        const started = await window.metaspacer.startLocalJob(payload);
+        if (started) {
+          activeJobId.current = started.id;
+          setJob(started);
+        }
+      } else {
+        const exported = await window.metaspacer.exportJob(payload);
+        if (exported) setExportedJob(exported);
+      }
+    } catch (reason) {
+      setRunnerError(
+        reason instanceof Error
+          ? reason.message
+          : 'The runner operation could not be completed.',
+      );
+    } finally {
+      setRunnerBusy(false);
+    }
+  };
+
+  const cancelJob = async () => {
+    if (!job || !window.metaspacer) return;
+    await window.metaspacer.cancelJob(job.id);
+  };
+
   const valid =
     preflight.status === 'complete' &&
     preflight.result.validation.valid &&
@@ -473,7 +554,7 @@ export function DesignBuilder({ onClose }: { onClose: () => void }) {
       <main className="builder-main">
         <section className="builder-hero">
           <div>
-            <p className="eyebrow">M5 · Model design</p>
+            <p className="eyebrow">M6 · Model design + runner</p>
             <h1>Build the recipe, then test the evidence.</h1>
           </div>
           <p>
@@ -835,6 +916,21 @@ export function DesignBuilder({ onClose }: { onClose: () => void }) {
                   />
                 </label>
                 <label className="field">
+                  <span>CPU affinity (optional)</span>
+                  <input
+                    value={cpuAffinityText}
+                    placeholder="e.g. 0, 1, 2, 3"
+                    inputMode="numeric"
+                    pattern="[0-9, ]*"
+                    onChange={(event) => {
+                      const value = event.currentTarget.value;
+                      if (!/^[\d, ]*$/.test(value)) return;
+                      setCpuAffinityText(value);
+                      update('cpuAffinity', affinityValue(value));
+                    }}
+                  />
+                </label>
+                <label className="field">
                   <span>Soft memory limit (MB)</span>
                   <input
                     type="number"
@@ -845,6 +941,28 @@ export function DesignBuilder({ onClose }: { onClose: () => void }) {
                       update(
                         'memorySoftLimitMB',
                         numberValue(event, draft.memorySoftLimitMB),
+                      )
+                    }
+                  />
+                </label>
+                <label className="field">
+                  <span>Monitored hard limit (optional MB)</span>
+                  <input
+                    type="number"
+                    min={draft.memorySoftLimitMB}
+                    step="256"
+                    value={draft.memoryHardLimitMB ?? ''}
+                    placeholder="No automatic stop"
+                    onChange={(event) =>
+                      update(
+                        'memoryHardLimitMB',
+                        event.currentTarget.value === ''
+                          ? null
+                          : numberValue(
+                              event,
+                              draft.memoryHardLimitMB ??
+                                draft.memorySoftLimitMB,
+                            ),
                       )
                     }
                   />
@@ -1005,20 +1123,127 @@ export function DesignBuilder({ onClose }: { onClose: () => void }) {
                     </div>
                     <div className="gate-actions">
                       <p>
-                        M5 saves the validated recipe. M6 will execute or
-                        package the chosen route.
+                        Both routes use the same package entry point and exact
+                        input bytes.
                       </p>
+                      <button
+                        className="outline-button"
+                        type="button"
+                        disabled={!route || runnerBusy}
+                        onClick={() => void save()}
+                      >
+                        Save spec only
+                      </button>
                       <button
                         className="primary-button"
                         type="button"
-                        disabled={!route}
-                        onClick={() => void save()}
+                        disabled={
+                          !route ||
+                          runnerBusy ||
+                          job?.status === 'queued' ||
+                          job?.status === 'running'
+                        }
+                        onClick={() => void executeRoute()}
                       >
-                        Save model spec
+                        {runnerBusy
+                          ? 'Preparing…'
+                          : route === 'local'
+                            ? 'Start local run'
+                            : route === 'export'
+                              ? 'Export portable job'
+                              : 'Choose a route'}
                       </button>
                     </div>
                     {saveMessage ? (
                       <p className="save-message">{saveMessage}</p>
+                    ) : null}
+                    {runnerError ? (
+                      <p className="runner-error" role="alert">
+                        {runnerError}
+                      </p>
+                    ) : null}
+                    {exportedJob ? (
+                      <div className="runner-result" aria-live="polite">
+                        <span className="validation-icon valid">✓</span>
+                        <div>
+                          <strong>Portable job exported</strong>
+                          <p>{exportedJob.path}</p>
+                          <small>
+                            Includes exact inputs, package source, manifest,
+                            launchers, and renv.lock.
+                          </small>
+                        </div>
+                      </div>
+                    ) : null}
+                    {job ? (
+                      <div
+                        className={`job-monitor job-${job.status}`}
+                        aria-live="polite"
+                      >
+                        <div className="job-monitor-heading">
+                          <div>
+                            <span>{job.status}</span>
+                            <strong>{job.name}</strong>
+                          </div>
+                          {job.status === 'queued' ||
+                          job.status === 'running' ? (
+                            <button
+                              className="outline-button"
+                              type="button"
+                              onClick={() => void cancelJob()}
+                            >
+                              Cancel
+                            </button>
+                          ) : null}
+                        </div>
+                        <dl>
+                          <div>
+                            <dt>CPU</dt>
+                            <dd>
+                              {job.telemetry
+                                ? `${job.telemetry.cpuPercent.toFixed(1)}%`
+                                : '—'}
+                            </dd>
+                          </div>
+                          <div>
+                            <dt>RSS</dt>
+                            <dd>
+                              {job.telemetry
+                                ? formatBytes(job.telemetry.rssBytes)
+                                : '—'}
+                            </dd>
+                          </div>
+                          <div>
+                            <dt>Peak RSS</dt>
+                            <dd>
+                              {job.telemetry
+                                ? formatBytes(job.telemetry.peakRssBytes)
+                                : '—'}
+                            </dd>
+                          </div>
+                          <div>
+                            <dt>Thread budget</dt>
+                            <dd>
+                              {job.requestedCpuThreads} / {job.cpuBudget}
+                            </dd>
+                          </div>
+                        </dl>
+                        <p
+                          className={
+                            job.telemetry?.softLimitExceeded
+                              ? 'memory-warning'
+                              : ''
+                          }
+                        >
+                          {job.queuePosition
+                            ? `Queue position ${job.queuePosition}. `
+                            : ''}
+                          {job.message}
+                        </p>
+                        {job.outputPath ? (
+                          <small>Bundle: {job.outputPath}</small>
+                        ) : null}
+                      </div>
                     ) : null}
                   </>
                 ) : null}

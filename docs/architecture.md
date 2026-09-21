@@ -94,5 +94,22 @@ directory and invokes the package's internal `preflight_spec()` function. That
 function composes the same document, hash, data, and engine validation used by
 `run_spec()` and only estimates cost after validation succeeds. Staging is
 removed after each check; no fitting occurs. The gate then requires an explicit
-local-or-export choice before saving the spec. M6 owns both execution routes and
-portable input packaging.
+local-or-export choice before execution or packaging.
+
+## Runner boundary
+
+Electron's main process owns one global local-job manager. Jobs reserve their
+requested thread count against an application-wide budget before `Rscript`
+starts; jobs that do not fit wait in one queue. The main process stages exact
+input bytes in a private temporary directory, passes thread and optional
+affinity settings through OpenMP/BLAS environment variables, and invokes the
+shared `run-spec.R` launcher. `pidusage` samples process CPU and RSS for the
+renderer. A soft-limit crossing is visible telemetry; an optional hard-limit
+crossing stops the process through monitoring. OS-level memory enforcement
+remains a later milestone as specified in the project brief.
+
+Export uses the same staged inputs and R launcher. A portable job directory
+contains the spec, data, SHA-256 manifest, `renv.lock`, the metaspacer package
+source, and POSIX/Windows launchers. It can therefore recreate the fitted
+environment remotely without introducing a second execution path. Job lifecycle
+and packaging do not enter the R package.

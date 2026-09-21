@@ -39,6 +39,27 @@ validate_spec_document <- function(spec) {
   if (is.null(spec$resources$cpuThreads) || spec$resources$cpuThreads < 1) {
     add_error("invalid_cpu_threads", "/resources/cpuThreads", "cpuThreads must be positive.")
   }
+  if (
+    is.null(spec$resources$memorySoftLimitMB) ||
+      spec$resources$memorySoftLimitMB < 256
+  ) {
+    add_error(
+      "invalid_memory_soft_limit",
+      "/resources/memorySoftLimitMB",
+      "memorySoftLimitMB must be at least 256."
+    )
+  }
+  if (
+    !is.null(spec$resources$memoryHardLimitMB) &&
+      !is.null(spec$resources$memorySoftLimitMB) &&
+      spec$resources$memoryHardLimitMB < spec$resources$memorySoftLimitMB
+  ) {
+    add_error(
+      "invalid_memory_hard_limit",
+      "/resources/memoryHardLimitMB",
+      "memoryHardLimitMB must be greater than or equal to memorySoftLimitMB."
+    )
+  }
   if (is.null(spec$seed) || spec$seed < 0) {
     add_error("invalid_seed", "/seed", "seed must be a non-negative integer.")
   }

@@ -7,8 +7,7 @@ uncertainty to every reported metric and prediction.
 
 ## Project status
 
-Development has completed **M5 — design builder**. The repository currently
-contains:
+Development has completed **M6 — runner**. The repository currently contains:
 
 - versioned JSON Schemas for model specifications and results bundles;
 - generated TypeScript types derived from those schemas;
@@ -31,10 +30,12 @@ contains:
   tier-filterable statistics table; and
 - a four-input design builder with column-role mapping, live package-backed
   validation, cost estimation, an explicit local-or-export gate, and model-spec
-  emission.
-
-The runner does not exist yet. M6 will execute a validated spec locally or
-package the same spec and inputs for remote execution.
+  emission; and
+- a local Electron runner with a global CPU-thread budget, OpenMP/BLAS resource
+  propagation, live CPU/RSS telemetry, memory guardrails, cancellation, and
+  queued execution; and
+- portable-job export with exact input bytes, a checksum manifest, the R package
+  source, an environment lock, and the same `run_spec()` launcher used locally.
 
 ## Repository map
 
@@ -43,7 +44,7 @@ schemas/          Versioned source-of-truth contracts
 examples/         Golden dataset, model spec, and results bundle
 app/src/shared/   Types generated from the contracts
 rpkg/             Pure R package and gllvm engine
-runner/           Reserved for local/export execution packaging
+runner/           Shared local/export R launcher and packaging documentation
 docs/             Architecture and decisions
 scripts/          Deterministic fixture/type generators
 tests/            Cross-contract and fixture-integrity tests
@@ -73,8 +74,10 @@ pnpm --filter @metaspacer/app start
 The empty state opens either the model-design workflow or a results-bundle JSON
 file. The builder accepts CSV/TSV count, sample, and feature tables plus an
 optional Newick tree. In Electron, every complete edit is checked by the R
-package before the local-or-export decision is enabled. The golden bundle
-remains available for a deterministic consumer tour.
+package before the local-or-export decision is enabled. A local run reports live
+CPU and RSS and writes a results bundle to a selected directory. Export creates
+a portable job directory suitable for transfer to managed compute. The golden
+bundle remains available for a deterministic consumer tour.
 
 `pnpm generate` is deterministic. It regenerates the golden CSV/Newick files,
 updates their SHA-256 hashes in the example spec and provenance, and regenerates

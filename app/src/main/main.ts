@@ -3,12 +3,23 @@ import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { dirname, join, normalize, resolve, sep } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
+import { exportPortableJob, packageSourceFromApp } from './export-job.js';
+import { safeDestination } from './job-files.js';
+import { LocalJobManager } from './job-runner.js';
+import type { JobSnapshot } from './runner-contract.js';
 
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
 const runFile = promisify(execFile);
+const jobManager = new LocalJobManager({
+  onUpdate: (job: JobSnapshot) => {
+    for (const window of BrowserWindow.getAllWindows()) {
+      window.webContents.send('runner:job-update', job);
+    }
+  },
+});
 
 interface PreflightPayload {
   spec: unknown;
@@ -96,17 +107,7 @@ ipcMain.handle(
     );
     try {
       for (const file of payload.files) {
-        const normalized = normalize(file.path);
-        const destination = resolve(stagingDirectory, normalized);
-        if (
-          normalized.startsWith('..') ||
-          (!destination.startsWith(`${stagingDirectory}${sep}`) &&
-            destination !== stagingDirectory)
-        ) {
-          throw new Error(
-            'Preflight input paths must stay within the staging directory.',
-          );
-        }
+        const destination = safeDestination(stagingDirectory, file.path);
         await mkdir(dirname(destination), { recursive: true });
         await writeFile(destination, Buffer.from(file.contentBase64, 'base64'));
       }
@@ -141,6 +142,34 @@ ipcMain.handle('builder:save-spec', async (_event, content: string) => {
   return selection.filePath;
 });
 
+ipcMain.handle('runner:start-local', async (_event, payload: unknown) => {
+  const selection = await dialog.showOpenDialog({
+    title: 'Choose a folder for the results bundle',
+    buttonLabel: 'Run here',
+    properties: ['openDirectory', 'createDirectory'],
+  });
+  if (selection.canceled || selection.filePaths.length === 0) return null;
+  return jobManager.submit(payload, selection.filePaths[0]);
+});
+
+ipcMain.handle('runner:list', () => jobManager.list());
+
+ipcMain.handle('runner:cancel', (_event, jobId: string) =>
+  jobManager.cancel(jobId),
+);
+
+ipcMain.handle('runner:export', async (_event, payload: unknown) => {
+  const selection = await dialog.showOpenDialog({
+    title: 'Choose where to create the portable job',
+    buttonLabel: 'Export job',
+    properties: ['openDirectory', 'createDirectory'],
+  });
+  if (selection.canceled || selection.filePaths.length === 0) return null;
+  return exportPortableJob(payload, selection.filePaths[0], {
+    packageSourceDirectory: packageSourceFromApp(app.getAppPath()),
+  });
+});
+
 app.whenReady().then(() => {
   createWindow();
   app.on('activate', () => {
@@ -154,4 +183,8 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.on('before-quit', () => {
+  jobManager.shutdown();
 });

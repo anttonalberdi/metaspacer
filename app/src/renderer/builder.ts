@@ -49,7 +49,9 @@ export interface BuilderDraft {
   fourthCornerEnabled: boolean;
   fourthCornerFormula: string;
   cpuThreads: number;
+  cpuAffinity: number[];
   memorySoftLimitMB: number;
+  memoryHardLimitMB: number | null;
   seed: number;
   outputPath: string;
 }
@@ -325,7 +327,9 @@ export function initialDraft(
           : navigator.hardwareConcurrency || 1,
       ),
     ),
+    cpuAffinity: [],
     memorySoftLimitMB: 4096,
+    memoryHardLimitMB: null,
     seed: 731,
     outputPath: 'out/metaspacer-run',
   };
@@ -414,7 +418,13 @@ export function buildModelSpec(
     engine: 'gllvm',
     resources: {
       cpuThreads: draft.cpuThreads,
+      ...(draft.cpuAffinity.length > 0
+        ? { cpuAffinity: draft.cpuAffinity as [number, ...number[]] }
+        : {}),
       memorySoftLimitMB: draft.memorySoftLimitMB,
+      ...(draft.memoryHardLimitMB === null
+        ? {}
+        : { memoryHardLimitMB: draft.memoryHardLimitMB }),
     },
     seed: draft.seed,
     output: { path: draft.outputPath, overwrite: false },
