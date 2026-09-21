@@ -7,7 +7,8 @@ uncertainty to every reported metric and prediction.
 
 ## Project status
 
-Development has completed **M6 — runner**. The repository currently contains:
+Development has completed **M7 — interactive projection**. The repository
+currently contains:
 
 - versioned JSON Schemas for model specifications and results bundles;
 - generated TypeScript types derived from those schemas;
@@ -35,7 +36,12 @@ Development has completed **M6 — runner**. The repository currently contains:
   propagation, live CPU/RSS telemetry, memory guardrails, cancellation, and
   queued execution; and
 - portable-job export with exact input bytes, a checksum manifest, the R package
-  source, an environment lock, and the same `run_spec()` launcher used locally.
+  source, an environment lock, and the same `run_spec()` launcher used locally;
+  and
+- an in-app projection workbench that encodes new conditions, evaluates
+  `X · Beta + Eta · Lambda` with bundle uncertainty, geometrically flags
+  extrapolation, overlays a transition path, and decodes projected points to
+  relative compositions.
 
 ## Repository map
 
@@ -77,7 +83,8 @@ optional Newick tree. In Electron, every complete edit is checked by the R
 package before the local-or-export decision is enabled. A local run reports live
 CPU and RSS and writes a results bundle to a selected directory. Export creates
 a portable job directory suitable for transfer to managed compute. The golden
-bundle remains available for a deterministic consumer tour.
+bundle remains available for a deterministic consumer tour, including live
+condition projection and transition exploration without refitting the model.
 
 `pnpm generate` is deterministic. It regenerates the golden CSV/Newick files,
 updates their SHA-256 hashes in the example spec and provenance, and regenerates

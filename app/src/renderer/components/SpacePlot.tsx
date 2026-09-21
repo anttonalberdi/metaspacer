@@ -5,13 +5,18 @@ import {
   PLOT_PADDING,
   PLOT_WIDTH,
   groupsInOrder,
-  plottedPoints,
+  plotBounds,
+  rawPlotPoints,
+  scalePlotPoint,
   type PlotBounds,
+  type PlotPoint,
 } from '../space';
+import type { ProjectionTransition } from '../projection';
 import { groupColor } from '../theme';
 
 interface SpacePlotProps {
   bundle: ResultsBundle;
+  transition?: ProjectionTransition | null;
 }
 
 function rgba(hex: string, alpha: number): string {
@@ -62,9 +67,36 @@ function AxisLabels({ bounds }: { bounds: PlotBounds }) {
   );
 }
 
-export function SpacePlot({ bundle }: SpacePlotProps) {
+function transitionPoint(
+  transition: ProjectionTransition,
+  endpoint: 'from' | 'to',
+): PlotPoint {
+  const projection = transition[endpoint];
+  return {
+    id: `live-${endpoint}`,
+    x: projection.coordinates[0].estimate.median,
+    y: projection.coordinates[1].estimate.median,
+    group: projection.group,
+    kind: 'predicted',
+    tier: projection.tier,
+    insideSampledDomain: projection.geometry.insideSampledDomain,
+  };
+}
+
+export function SpacePlot({ bundle, transition }: SpacePlotProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { points, bounds } = useMemo(() => plottedPoints(bundle), [bundle]);
+  const { points, bounds, liveTransition } = useMemo(() => {
+    const raw = rawPlotPoints(bundle);
+    const live = transition
+      ? [transitionPoint(transition, 'from'), transitionPoint(transition, 'to')]
+      : [];
+    const nextBounds = plotBounds([...raw, ...live]);
+    return {
+      points: raw.map((point) => scalePlotPoint(point, nextBounds)),
+      bounds: nextBounds,
+      liveTransition: live.map((point) => scalePlotPoint(point, nextBounds)),
+    };
+  }, [bundle, transition]);
   const groups = useMemo(() => groupsInOrder(points), [points]);
   const axes = bundle.precomputed.ordination.axisLabels;
 
@@ -159,6 +191,28 @@ export function SpacePlot({ bundle }: SpacePlotProps) {
             predictions; crosses are extrapolated predictions.
           </desc>
           <AxisLabels bounds={bounds} />
+          <defs>
+            <marker
+              id="transition-arrowhead"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8 Z" />
+            </marker>
+            <marker
+              id="transition-arrowhead-extrapolated"
+              markerWidth="8"
+              markerHeight="8"
+              refX="7"
+              refY="4"
+              orient="auto"
+            >
+              <path d="M0,0 L8,4 L0,8 Z" />
+            </marker>
+          </defs>
           <line
             className="axis-line"
             x1={PLOT_PADDING}
@@ -173,6 +227,32 @@ export function SpacePlot({ bundle }: SpacePlotProps) {
             y1={PLOT_PADDING}
             y2={PLOT_HEIGHT - PLOT_PADDING}
           />
+          {transition && liveTransition.length === 2 ? (
+            <g
+              className={`live-transition ${transition.to.tier === 'extrapolated' ? 'is-extrapolated' : ''}`}
+            >
+              <title>
+                Live transition: {transition.from.group} to{' '}
+                {transition.to.group}
+              </title>
+              <line
+                x1={liveTransition[0].x}
+                y1={liveTransition[0].y}
+                x2={liveTransition[1].x}
+                y2={liveTransition[1].y}
+                markerEnd={`url(#transition-arrowhead${transition.to.tier === 'extrapolated' ? '-extrapolated' : ''})`}
+              />
+              {liveTransition.map((point, index) => (
+                <circle
+                  key={point.id}
+                  cx={point.x}
+                  cy={point.y}
+                  r={index === 0 ? 7 : 8}
+                  className={index === 0 ? 'transition-from' : 'transition-to'}
+                />
+              ))}
+            </g>
+          ) : null}
           {points.map((point) => {
             const color = groupColor(groups.indexOf(point.group));
             const title = `${point.sampleId ?? point.id} · ${point.group.replaceAll('_', ' ')} · ${point.tier}`;
@@ -272,6 +352,12 @@ export function SpacePlot({ bundle }: SpacePlotProps) {
             <i className="mark extrapolated-mark" />
             Extrapolated
           </span>
+          {transition ? (
+            <span>
+              <i className="mark transition-mark" />
+              Live transition
+            </span>
+          ) : null}
         </div>
       </div>
     </section>

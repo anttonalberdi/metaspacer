@@ -9,9 +9,11 @@ import {
 } from './bundle';
 import { CoveragePanel } from './components/CoveragePanel';
 import { DesignBuilder } from './components/DesignBuilder';
+import { ProjectionPanel } from './components/ProjectionPanel';
 import { SpacePlot } from './components/SpacePlot';
 import { StatsTable } from './components/StatsTable';
 import { TierGuide } from './components/TierGuide';
+import type { ProjectionTransition } from './projection';
 
 interface LoadedBundle {
   data: ResultsBundle;
@@ -23,11 +25,15 @@ export function App() {
   const [showBuilder, setShowBuilder] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [transition, setTransition] = useState<ProjectionTransition | null>(
+    null,
+  );
   const fileInput = useRef<HTMLInputElement>(null);
 
   const useContent = (content: string, source: string) => {
     try {
       setLoaded({ data: parseResultsBundle(content), source });
+      setTransition(null);
       setError(null);
     } catch (reason) {
       setError(
@@ -77,6 +83,7 @@ export function App() {
 
   const showExample = () => {
     setLoaded({ data: getExampleBundle(), source: 'Golden example bundle' });
+    setTransition(null);
     setError(null);
   };
 
@@ -114,7 +121,7 @@ export function App() {
           <p className="brand">
             <span>meta</span>spacer
           </p>
-          <div className="milestone-label">M6 · Runner + design + consumer</div>
+          <div className="milestone-label">M7 · Interactive projection</div>
           <h1 id="welcome-title">
             Design the space.
             <br />
@@ -122,8 +129,9 @@ export function App() {
           </h1>
           <p className="welcome-intro">
             Map microbiome inputs into a validated model recipe, run it with
-            live resource telemetry, export it for remote compute, or inspect a
-            finished bundle.
+            live resource telemetry, export it for remote compute, inspect a
+            finished bundle, and project transitions directly from its fitted
+            parameters.
           </p>
           <div className="welcome-actions">
             <button
@@ -261,7 +269,7 @@ export function App() {
         <TierGuide />
 
         <div className="overview-grid">
-          <SpacePlot bundle={bundle} />
+          <SpacePlot bundle={bundle} transition={transition} />
           <div className="side-column">
             <CoveragePanel bundle={bundle} />
             <section
@@ -289,6 +297,12 @@ export function App() {
             </section>
           </div>
         </div>
+
+        <ProjectionPanel
+          key={bundle.provenance.specSha256}
+          bundle={bundle}
+          onTransitionChange={setTransition}
+        />
 
         {bundle.provenance.warnings?.length ? (
           <aside className="warning-strip" aria-label="Bundle warnings">

@@ -82,3 +82,22 @@
   `metaspacer::run_spec()` call. Export produces a directory containing exact
   inputs, hashes, launchers, package source, and a `renv.lock` snapshot rather
   than generating engine-specific code.
+
+## M7 verified choices
+
+- Interactive projection consumes only results-bundle fields; it does not call
+  R, refit a model, or add a second engine-specific prediction path.
+- Design rows are evaluated from the bundle's declarative columns, including
+  categorical indicators, binary encodings, continuous standardization, and
+  interaction products.
+- Live uncertainty uses 200 deterministic draws. Sampling-covariance bundles use
+  their diagonal or dense covariance, posterior bundles use their stored draws,
+  and both sample the fitted latent distribution before applying the shared
+  projection.
+- Relative composition is a two-axis reconstruction through the stored center
+  and rotation. It is labelled approximate because discarded axes cannot be
+  recovered; the log-link offset cancels during relative normalization.
+- The TypeScript geometric classifier mirrors the package rule against observed
+  bundle states. Coverage is looked up from measured group metrics and is shown
+  as unavailable when the bundle does not report the selected group, rather than
+  substituting another population's value.

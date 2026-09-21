@@ -80,6 +80,23 @@ as solid points, interpolation as outlined diamonds, and extrapolation as
 crosses. Coverage and statistics use only precomputed metrics from the bundle,
 so the M4 consumer performs no model fitting or metric recomputation.
 
+Interactive projection stays inside the renderer and reads only the fitted
+parameter layer of a validated bundle. Design columns are reconstructed from
+their declarative predictor/factor metadata, then the renderer evaluates
+`L = X · Beta + Eta · Lambda`, applies the stored shared rotation, and uses the
+log-link inverse to decode relative composition. It samples either the stored
+parameter covariance or posterior draws together with the fitted latent
+distribution, so coordinates, transition distance, and decoded composition
+retain intervals.
+
+The projection workbench repeats the R extractor's engine-independent
+`mixed_hull_range` rule over the observed conditions carried by the bundle.
+Categorical and binary predictors define strata; continuous predictors use a
+range, two-dimensional hull, or higher-dimensional standardized box. That
+geometric result alone determines interpolation versus extrapolation. The
+corresponding measured Chao coverage is displayed when the bundle reports it for
+the selected group; missing group coverage is stated rather than inferred.
+
 ## Design-builder boundary
 
 The renderer reads dropped CSV/TSV tables and an optional Newick tree only to
